@@ -54,10 +54,10 @@ import jsettlers.logic.map.EMapStartResources;
 import jsettlers.logic.map.MapLoader;
 import jsettlers.logic.player.PlayerSetting;
 import jsettlers.main.JSettlersGame;
+import jsettlers.main.swing.JSettlersFrame;
 import jsettlers.main.swing.JSettlersSwingUtil;
 import jsettlers.main.swing.lookandfeel.ELFStyle;
 import jsettlers.main.swing.lookandfeel.components.BackgroundPanel;
-import jsettlers.main.swing.JSettlersFrame;
 
 /**
  * @author codingberlin
@@ -427,12 +427,12 @@ public class JoinGamePanel extends BackgroundPanel {
 		}
 		playerSlotsPanel.removeAll();
 		addPlayerSlotHeadline();
-		for (int i = 0; i < playerSlots.size(); i++) {
-			if (i < (int) numberOfPlayersComboBox.getSelectedItem()) {
-				playerSlots.get(i).addTo(playerSlotsPanel, i + 1);
-			} else {
-				playerSlots.get(i).setAvailable(false);
-			}
+		int available = Math.min(playerSlots.size(), (int) numberOfPlayersComboBox.getSelectedItem());
+		for (int i = 0; i < available; i++) {
+			playerSlots.get(i).addTo(playerSlotsPanel, i + 1);
+		}
+		for (int i = available; i < playerSlots.size(); i++) {
+			playerSlots.get(i).setAvailable(false);
 		}
 		SwingUtilities.updateComponentTreeUI(playerSlotsPanel);
 		SlotToggleGroup slotToggleGroup = new SlotToggleGroup();
