@@ -12,30 +12,15 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *******************************************************************************/
-package jsettlers.main.swing.menu.joingame;
+package jsettlers.main.swing.menu.joingame.slots;
 
-import java.util.List;
-import java.util.Vector;
+import jsettlers.logic.map.MapLoader;
 
 /**
  * @author codingberlin
  */
-public class SlotToggleGroup {
+public interface PlayerSlotFactory {
 
-	List<PlayerSlot> playerSlots = new Vector<>();
-
-	public SlotToggleGroup() {}
-
-	public void add(final PlayerSlot playerSlot) {
-		playerSlots.add(playerSlot);
-		playerSlot.setSlotListener((oldSlot, newSlot) -> {
-			playerSlots.stream().forEach(otherPlayerSlot -> {
-				if (!playerSlot.equals(otherPlayerSlot) && otherPlayerSlot.getSlot() == newSlot) {
-					otherPlayerSlot.setSlot(oldSlot);
-				}
-			});
-		});
-	}
-
+	PlayerSlot createPlayerSlot(byte slot, MapLoader mapLoader);
 
 }

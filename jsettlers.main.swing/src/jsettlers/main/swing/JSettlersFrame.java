@@ -14,6 +14,12 @@
  *******************************************************************************/
 package jsettlers.main.swing;
 
+import go.graphics.area.Area;
+import go.graphics.region.Region;
+import go.graphics.sound.SoundPlayer;
+import go.graphics.swing.AreaContainer;
+import go.graphics.swing.sound.SwingSoundPlayer;
+
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
@@ -24,11 +30,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import go.graphics.area.Area;
-import go.graphics.region.Region;
-import go.graphics.sound.SoundPlayer;
-import go.graphics.swing.AreaContainer;
-import go.graphics.swing.sound.SwingSoundPlayer;
 import jsettlers.common.menu.IJoinPhaseMultiplayerGameConnector;
 import jsettlers.common.menu.IMapInterfaceConnector;
 import jsettlers.common.menu.IMultiplayerConnector;
@@ -39,7 +40,9 @@ import jsettlers.graphics.map.MapContent;
 import jsettlers.graphics.startscreen.SettingsManager;
 import jsettlers.logic.map.MapLoader;
 import jsettlers.main.MultiplayerConnector;
-import jsettlers.main.swing.menu.joingame.JoinGamePanel;
+import jsettlers.main.swing.menu.joingame.JoinMultiplayerGamePanel;
+import jsettlers.main.swing.menu.joingame.NewMultiplayerGamePanel;
+import jsettlers.main.swing.menu.joingame.SinglePlayerJoinPanel;
 import jsettlers.main.swing.menu.mainmenu.MainMenuPanel;
 import jsettlers.main.swing.menu.startinggamemenu.StartingGamePanel;
 
@@ -52,7 +55,6 @@ public class JSettlersFrame extends JFrame {
 	private final IMultiplayerConnector multiPlayerConnector;
 	private final MainMenuPanel mainPanel;
 	private final StartingGamePanel startingGamePanel = new StartingGamePanel(this);
-	private final JoinGamePanel joinGamePanel = new JoinGamePanel(this);
 	private final SoundPlayer soundPlayer = new SwingSoundPlayer();
 	private Timer redrawTimer;
 
@@ -124,22 +126,19 @@ public class JSettlersFrame extends JFrame {
 	}
 
 	public void showNewSinglePlayerGameMenu(MapLoader mapLoader) {
-		joinGamePanel.setSinglePlayerMap(mapLoader);
-		setNewContentPane(joinGamePanel);
+		setNewContentPane(new SinglePlayerJoinPanel(this, mapLoader));
 	}
 
 	public void showNewMultiPlayerGameMenu(MapLoader mapLoader, IMultiplayerConnector connector) {
-		joinGamePanel.setNewMultiPlayerMap(mapLoader, connector);
-		setNewContentPane(joinGamePanel);
+		setNewContentPane(new NewMultiplayerGamePanel(this, mapLoader, connector));
+	}
+
+	public void showJoinMultiplayerMenu(IJoinPhaseMultiplayerGameConnector joinPhaseMultiplayerGameConnector, MapLoader mapLoader) {
+		setNewContentPane(new JoinMultiplayerGamePanel(this, mapLoader, joinPhaseMultiplayerGameConnector));
 	}
 
 	public IMultiplayerConnector getMultiPlayerConnector() {
 		return multiPlayerConnector;
-	}
-
-	public void showJoinMultiplayerMenu(IJoinPhaseMultiplayerGameConnector joinPhaseMultiplayerGameConnector, MapLoader mapLoader) {
-		joinGamePanel.setJoinMultiPlayerMap(joinPhaseMultiplayerGameConnector, mapLoader);
-		setNewContentPane(joinGamePanel);
 	}
 
 	public IMapInterfaceConnector showStartedGame(IStartedGame startedGame) {

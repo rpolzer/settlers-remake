@@ -12,7 +12,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *******************************************************************************/
-package jsettlers.main.swing.menu.joingame;
+package jsettlers.main.swing.menu.joingame.slots;
 
 import jsettlers.common.ai.EPlayerType;
 import jsettlers.graphics.startscreen.SettingsManager;
@@ -42,9 +42,9 @@ public class SinglePlayerSlotFactory implements PlayerSlotFactory {
 					EPlayerType.AI_EASY,
 					EPlayerType.AI_VERY_EASY });
 		}
-		playerSlot.setSlotAndTeams((byte) mapLoader.getMaxPlayers());
-		playerSlot.setSlot(slot);
-		playerSlot.setReadyButtonEnabled(false);
+		// playerSlot.setSlotAndTeams((byte) mapLoader.getMaxPlayers()); XXX
+		// playerSlot.setSlot(slot);
+		playerSlot.setTypeChangeable(false);
 		playerSlot.setTeam((byte) (slot < mapLoader.getMaxPlayers() / 2 ? 0 : 1));
 		return playerSlot;
 	}

@@ -12,25 +12,41 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *******************************************************************************/
-package jsettlers.main.swing.menu.joingame;
+package jsettlers.main.swing.menu.joingame.slots;
 
 import jsettlers.common.ai.EPlayerType;
+import jsettlers.graphics.startscreen.SettingsManager;
 import jsettlers.logic.map.MapLoader;
 
 /**
  * @author codingberlin
  */
-public class ClientOfMultiplayerPlayerSlotFactory implements PlayerSlotFactory {
+public class HostOfMultiplayerPlayerSlotFactory implements PlayerSlotFactory {
 
-	@Override public PlayerSlot createPlayerSlot(byte slot, MapLoader mapLoader) {
+	@Override
+	public PlayerSlot createPlayerSlot(byte slot, MapLoader mapLoader) {
 		PlayerSlot playerSlot = new PlayerSlot();
-		playerSlot.setPossibleTypes(new EPlayerType[] {EPlayerType.HUMAN, EPlayerType.AI_VERY_HARD});
-		playerSlot.setSlotAndTeams((byte) mapLoader.getMaxPlayers());
-		playerSlot.setSlot(slot);
-		playerSlot.setReady(false);
-		playerSlot.setReadyButtonEnabled(false);
-		playerSlot.setTeam((byte) (slot < mapLoader.getMaxPlayers() / 2 ? 0 : 1));
-		playerSlot.disableAllInputs();
+
+		if (slot == 0) {
+			SettingsManager settingsManager = SettingsManager.getInstance();
+			playerSlot.setPlayerName(settingsManager.getPlayer().getName());
+			playerSlot.setPossibleTypes(new EPlayerType[] { EPlayerType.HUMAN });
+			playerSlot.setReadyButtonChangeable(true);
+			playerSlot.setCivilisationAndTeamChangeable(true);
+			playerSlot.setReady(false);
+		} else {
+			playerSlot.setPossibleTypes(new EPlayerType[] {
+					EPlayerType.HUMAN,
+					EPlayerType.AI_VERY_HARD
+			});
+			playerSlot.setSelectedType(EPlayerType.AI_VERY_HARD);
+			playerSlot.setReady(false);
+		}
+
+		// playerSlot.setSlotAndTeams((byte) mapLoader.getMaxPlayers());
+		// playerSlot.setSlot(slot);
+		// playerSlot.setTeam((byte) (slot < mapLoader.getMaxPlayers() / 2 ? 0 : 1));
+		// playerSlot.disableAllInputs();
 		return playerSlot;
 	}
 

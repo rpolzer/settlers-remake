@@ -12,40 +12,24 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *******************************************************************************/
-package jsettlers.main.swing.menu.joingame;
+package jsettlers.main.swing.menu.joingame.slots;
 
 import jsettlers.common.ai.EPlayerType;
-import jsettlers.graphics.startscreen.SettingsManager;
 import jsettlers.logic.map.MapLoader;
 
 /**
  * @author codingberlin
  */
-public class HostOfMultiplayerPlayerSlotFactory implements PlayerSlotFactory {
+public class ClientOfMultiplayerPlayerSlotFactory implements PlayerSlotFactory {
 
-	@Override public PlayerSlot createPlayerSlot(byte slot, MapLoader mapLoader) {
+	@Override
+	public PlayerSlot createPlayerSlot(byte slot, MapLoader mapLoader) {
 		PlayerSlot playerSlot = new PlayerSlot();
-
-		if (slot == 0) {
-			SettingsManager settingsManager = SettingsManager.getInstance();
-			playerSlot.setPlayerName(settingsManager.getPlayer().getName());
-			playerSlot.setPossibleTypes(new EPlayerType[] { EPlayerType.HUMAN});
-			playerSlot.setReadyButtonEnabled(true);
-			playerSlot.setReady(false);
-		} else {
-			playerSlot.setPossibleTypes(new EPlayerType[] {
-					EPlayerType.HUMAN,
-					EPlayerType.AI_VERY_HARD
-			});
-			playerSlot.setTypeComboBox(EPlayerType.AI_VERY_HARD);
-			playerSlot.setReadyButtonEnabled(false);
-			playerSlot.setReady(false);
-		}
-
-		playerSlot.setSlotAndTeams((byte) mapLoader.getMaxPlayers());
-		playerSlot.setSlot(slot);
+		playerSlot.setPossibleTypes(new EPlayerType[] { EPlayerType.HUMAN, EPlayerType.AI_VERY_HARD });
+		playerSlot.setReady(false);
+		playerSlot.setReadyButtonChangeable(false);
 		playerSlot.setTeam((byte) (slot < mapLoader.getMaxPlayers() / 2 ? 0 : 1));
-		playerSlot.disableAllInputs();
+		playerSlot.setCivilisationAndTeamChangeable(false); // TODO: Allow for current player
 		return playerSlot;
 	}
 

@@ -14,15 +14,15 @@
  *******************************************************************************/
 package jsettlers.main.swing.menu.mainmenu;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import jsettlers.common.menu.IMultiplayerConnector;
 import jsettlers.common.menu.Player;
 import jsettlers.graphics.startscreen.SettingsManager;
 import jsettlers.main.MultiplayerConnector;
 import jsettlers.main.swing.JSettlersFrame;
 import jsettlers.main.swing.menu.openpanel.OpenPanel;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * @author codingberlin
@@ -32,7 +32,7 @@ public class NewMultiPlayerGame implements ActionListener {
 	private final JSettlersFrame settlersFrame;
 	private OpenPanel relatedOpenPanel;
 
-	public NewMultiPlayerGame(JSettlersFrame settlersFrame){
+	public NewMultiPlayerGame(JSettlersFrame settlersFrame) {
 		this.settlersFrame = settlersFrame;
 	}
 
@@ -40,10 +40,12 @@ public class NewMultiPlayerGame implements ActionListener {
 		this.relatedOpenPanel = relatedOpenPanel;
 	}
 
-	@Override public void actionPerformed(ActionEvent e) {
+	@Override
+	public void actionPerformed(ActionEvent e) {
 		SettingsManager settingsManager = SettingsManager.getInstance();
 		Player player = settingsManager.getPlayer();
-		IMultiplayerConnector connector = new MultiplayerConnector(settingsManager.get(SettingsManager.SETTING_SERVER), player.getId(), player.getName());
+		IMultiplayerConnector connector = new MultiplayerConnector(settingsManager.get(SettingsManager.SETTING_SERVER), player.getId(),
+				player.getName());
 		settlersFrame.showNewMultiPlayerGameMenu(relatedOpenPanel.getSelectedMap(), connector);
 	}
 }

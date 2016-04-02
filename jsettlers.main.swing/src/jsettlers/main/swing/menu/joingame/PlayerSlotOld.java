@@ -39,7 +39,7 @@ import jsettlers.main.swing.lookandfeel.ELFStyle;
 /**
  * @author codingberlin
  */
-public class PlayerSlot {
+public class PlayerSlotOld {
 
 	public static final int READY_BUTTON_WIDTH = 40;
 	public static final int READY_BUTTON_HEIGHT = 25;
@@ -61,7 +61,7 @@ public class PlayerSlot {
 	private boolean isReady = true;
 	private IJoinPhaseMultiplayerGameConnector gameToBeInformedAboutReady;
 
-	public PlayerSlot() {
+	public PlayerSlotOld() {
 		isAvailable = true;
 		setStyle();
 		localize();
