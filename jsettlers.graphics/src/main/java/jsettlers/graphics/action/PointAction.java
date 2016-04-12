@@ -27,7 +27,7 @@ public class PointAction extends Action {
 	private final ShortPoint2D position;
 
 	/**
-	 * Creates a new moveto aciton.
+	 * Creates a new aciton with a position.
 	 *
 	 * @param type
 	 *            The type of this action.

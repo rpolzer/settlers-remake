@@ -30,6 +30,7 @@ import jsettlers.graphics.action.Action;
 import jsettlers.graphics.action.ActionFireable;
 import jsettlers.graphics.action.ChangePanelAction;
 import jsettlers.graphics.action.ExecutableAction;
+import jsettlers.graphics.action.MoveToAction;
 import jsettlers.graphics.action.PointAction;
 import jsettlers.graphics.map.MapDrawContext;
 import jsettlers.graphics.map.controls.IControls;
@@ -240,7 +241,8 @@ public class OriginalControls implements IControls {
 			if (selecting) {
 				return new PointAction(EActionType.PAN_TO, clickPosition);
 			} else {
-				return new PointAction(EActionType.MOVE_TO, clickPosition);
+				// TODO: Same as MapContent#handleCommandOnMap
+				return new MoveToAction(clickPosition, false, false);
 			}
 		} else {
 			return null;

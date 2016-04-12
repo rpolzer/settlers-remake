@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015
+ * Copyright (c) 2016
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -12,35 +12,41 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *******************************************************************************/
-package jsettlers.graphics.androidui.actions;
+package jsettlers.graphics.action;
 
 import jsettlers.common.menu.action.EActionType;
-import jsettlers.common.menu.action.IAction;
-import jsettlers.graphics.action.MoveToAction;
-import jsettlers.graphics.action.PointAction;
-import jsettlers.graphics.localization.Labels;
+import jsettlers.common.position.ShortPoint2D;
 
-public class MoveToOnClick extends ContextAction {
+/**
+ * This action lets movables walk to a given position.
+ *
+ * @author Michael Zangl
+ */
+public class MoveToAction extends PointAction {
+	private final boolean force;
+	private final boolean work;
 
-	public MoveToOnClick() {
-		this(false);
+	/**
+	 * Create a new MoveToAction.
+	 * 
+	 * @param position
+	 *            The position the user clicked at.
+	 * @param force
+	 *            If we should force a go to there.
+	 * @param force
+	 *            If we should start working when going there
+	 */
+	public MoveToAction(ShortPoint2D position, boolean force, boolean work) {
+		super(EActionType.MOVE_TO, position);
+		this.force = force;
+		this.work = work;
 	}
 
-	public MoveToOnClick(boolean force) {
-
+	public boolean isForce() {
+		return force;
 	}
 
-	@Override
-	public String getDesciption() {
-		return Labels.getString("click_to_move");
+	public boolean isWork() {
+		return work;
 	}
-
-	@Override
-	public IAction replaceAction(IAction action) {
-		if (action.getActionType() == EActionType.SELECT_POINT) {
-			return new MoveToAction(((PointAction) action).getPosition(), false, false);
-		}
-		return super.replaceAction(action);
-	}
-
 }

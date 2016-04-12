@@ -59,6 +59,7 @@ import jsettlers.graphics.action.Action;
 import jsettlers.graphics.action.ActionFireable;
 import jsettlers.graphics.action.ActionHandler;
 import jsettlers.graphics.action.ActionThreadBlockingListener;
+import jsettlers.graphics.action.MoveToAction;
 import jsettlers.graphics.action.PointAction;
 import jsettlers.graphics.action.ScreenChangeAction;
 import jsettlers.graphics.action.SelectAreaAction;
@@ -812,7 +813,8 @@ public final class MapContent implements RegionContent, IMapInterfaceListener, A
 			if (commandEvent.isSelecting()) {
 				action = handleSelectCommand(onMap);
 			} else {
-				action = new PointAction(EActionType.MOVE_TO, onMap);
+				//TODO: Use modifiers to set force/work.
+				action = new MoveToAction(onMap, false, false);
 			}
 			return action;
 		}
