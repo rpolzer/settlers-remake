@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015
+ * Copyright (c) 2016
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -14,21 +14,25 @@
  *******************************************************************************/
 package jsettlers.common.movable;
 
+import java.util.EnumSet;
+
 /**
- * The classification of a soldier.
+ * The level a soldier is of.
  * 
- * @author Andreas Eberle
+ * @author Michael Zangl
  */
-public enum ESoldierClass {
-	INFANTRY,
-	BOWMAN;
+public enum ESoldierLevel {
+	LEVEL_1(EMovableType.SWORDSMAN_L1, EMovableType.BOWMAN_L1, EMovableType.PIKEMAN_L1),
+	LEVEL_2(EMovableType.SWORDSMAN_L2, EMovableType.BOWMAN_L2, EMovableType.PIKEMAN_L2),
+	LEVEL_3(EMovableType.SWORDSMAN_L3, EMovableType.BOWMAN_L3, EMovableType.PIKEMAN_L3);
 
-	public static final ESoldierClass[] VALUES = ESoldierClass.values();
-	public static final int NUMBER_OF_VALUES = VALUES.length;
+	private final EnumSet<EMovableType> soldiers;
 
-	public final int ordinal;
+	ESoldierLevel(EMovableType type, EMovableType... types) {
+		soldiers = EnumSet.of(type, types);
+	}
 
-	private ESoldierClass() {
-		this.ordinal = ordinal();
+	public boolean isOfLevel(EMovableType type) {
+		return soldiers.contains(type);
 	}
 }

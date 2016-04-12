@@ -135,4 +135,13 @@ public enum EMovableType {
 	public short getStepDurationMs() {
 		return stepDurationMs;
 	}
+
+	public ESoldierLevel getLevel() {
+		for (ESoldierLevel value : ESoldierLevel.values()) {
+			if (value.isOfLevel(this)) {
+				return value;
+			}
+		}
+		throw new IllegalArgumentException("Could not get level of " + this);
+	}
 }
