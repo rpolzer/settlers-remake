@@ -14,6 +14,9 @@
  *******************************************************************************/
 package jsettlers.common.selectable;
 
+import java.util.Collections;
+import java.util.Iterator;
+
 import jsettlers.common.movable.EMovableType;
 
 /**
@@ -28,7 +31,7 @@ public interface ISelectionSet extends Iterable<ISelectable> {
 	/**
 	 * Checks whether the given object is selected by this set.
 	 * 
-	 * @param selected
+	 * @param selectable
 	 *            The selectable to be checked.
 	 * @return true if and only if it is selected.
 	 */
@@ -62,4 +65,36 @@ public interface ISelectionSet extends Iterable<ISelectable> {
 	 * @return
 	 */
 	ISelectable get(int idx);
+
+	ISelectionSet EMPTY = new ISelectionSet() {
+		@Override
+		public boolean contains(ISelectable selectable) {
+			return false;
+		}
+
+		@Override
+		public int getSize() {
+			return 0;
+		}
+
+		@Override
+		public ESelectionType getSelectionType() {
+			return ESelectionType.SOLDIERS;
+		}
+
+		@Override
+		public int getMovableCount(EMovableType type) {
+			return 0;
+		}
+
+		@Override
+		public ISelectable get(int idx) {
+			return null;
+		}
+
+		@Override
+		public Iterator<ISelectable> iterator() {
+			return Collections.emptyIterator();
+		}
+	};
 }

@@ -14,37 +14,30 @@
  *******************************************************************************/
 package jsettlers.graphics.androidui.menu.selection;
 
-import jsettlers.common.menu.action.EActionType;
-import jsettlers.graphics.action.Action;
-import jsettlers.graphics.androidui.R;
-import jsettlers.graphics.androidui.menu.AndroidMenuPutable;
-import jsettlers.graphics.androidui.menu.Dialog;
+import android.view.View;
 
-public class DestroyBuildingDialog extends Dialog {
+import jsettlers.common.selectable.ISelectionSet;
+import jsettlers.graphics.action.ExecutableAction;
+import jsettlers.graphics.androidui.actions.MoveToOnClick;
+import jsettlers.graphics.androidui.menu.AndroidMenu;
 
-	public DestroyBuildingDialog() {
-		super();
+/**
+ * @author Michael Zangl
+ */
+public abstract class SelectionMenu extends AndroidMenu {
+	protected ISelectionSet selection = ISelectionSet.EMPTY;
+
+	public void setSelection(ISelectionSet selection) {
+		this.selection = selection;
 	}
 
-	@Override
-	protected int getMessageId() {
-		return R.string.building_destroy_text;
-	}
-
-	@Override
-	protected int getOkId() {
-		return R.string.building_destroy_ok;
-	}
-
-	@Override
-	protected int getAbortId() {
-		return R.string.building_destroy_abort;
-	}
-
-	@Override
-	protected void okClicked() {
-		getActionFireable().fireAction(new Action(EActionType.DESTROY));
-		getPutable().hideMenu();
+	protected View.OnClickListener generateMoveToListener(final boolean force, final boolean work) {
+		return generateActionListener(new ExecutableAction() {
+			@Override
+			public void execute() {
+				setActiveAction(new MoveToOnClick(force, work));
+			}
+		}, true);
 	}
 
 }

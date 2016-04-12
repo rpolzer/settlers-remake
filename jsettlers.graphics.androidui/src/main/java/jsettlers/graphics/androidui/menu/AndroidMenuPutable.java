@@ -95,6 +95,7 @@ public class AndroidMenuPutable implements ActionFireable {
 	public void showMenuFragment(AndroidMenu fragment) {
 		synchronized (activeMenuMutex) {
 			actionFireable.fireAction(new Action(EActionType.ABORT));
+			fragment.setMenuPutable(this);
 			activeMenu.add(fragment);
 			fragmentHandler.showMenuFragment(fragment);
 		}

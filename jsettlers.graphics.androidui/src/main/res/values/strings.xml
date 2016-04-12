@@ -13,4 +13,7 @@
     <string name="gamemenu_speed">Game speed</string>
     <string name="gamemenu_skip">Skip one Minute</string>
     <string name="gamemenu_save">Save</string>
+    <string name="selection_movable_move">Move to</string>
+    <string name="selection_soldier_attack">Attack</string>
+    <string name="selection_specialist_work">Work at</string>
 </resources>

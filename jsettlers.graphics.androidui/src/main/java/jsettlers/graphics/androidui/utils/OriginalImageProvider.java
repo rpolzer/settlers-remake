@@ -14,6 +14,7 @@ import jsettlers.graphics.image.SingleImage;
 import jsettlers.graphics.map.draw.ImageProvider;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 public class OriginalImageProvider {
@@ -24,11 +25,15 @@ public class OriginalImageProvider {
 	private final LinkedBlockingQueue<ImageReference> toLoad = new LinkedBlockingQueue<ImageReference>();
 
 	public static ImageReference get(EBuildingType building) {
-		return INSTANCE.get(building.getGuiImage());
+		return INSTANCE.realGet(building.getGuiImage());
 	}
 
 	public static ImageReference get(EMaterialType material) {
-		return INSTANCE.get(material.getIcon());
+		return INSTANCE.realGet(material.getIcon());
+	}
+
+	public static ImageReference get(ImageLink image) {
+		return INSTANCE.realGet(image);
 	}
 
 	/**
@@ -38,7 +43,7 @@ public class OriginalImageProvider {
 	 *            The image to get
 	 * @return The reference to the image that will be loaded.
 	 */
-	private ImageReference get(ImageLink image) {
+	private ImageReference realGet(ImageLink image) {
 		String name = image.getName();
 		ImageReference cached = cachedImages.get(name);
 		if (cached != null) {

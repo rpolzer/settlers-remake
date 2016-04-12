@@ -30,8 +30,8 @@ import android.view.ViewGroup;
  */
 public class GameMenu extends AndroidMenu {
 
-	public GameMenu(AndroidMenuPutable puttable) {
-		super(puttable);
+	public GameMenu() {
+		super();
 	}
 
 	@Override

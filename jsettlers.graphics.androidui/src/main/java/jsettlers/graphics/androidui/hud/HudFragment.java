@@ -14,14 +14,15 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 public class HudFragment extends AndroidMenu {
-	private final AndroidMenu buildMenu;
-	private final AndroidMenu gameMenu;
 	private ButtonForSelectionManager selectionSetter;
 
-	public HudFragment(AndroidMenuPutable putable) {
-		super(putable);
-		buildMenu = new BuildMenu(putable);
-		gameMenu = new GameMenu(putable);
+	public HudFragment() {
+		super();
+	}
+
+	@Override
+	public void setMenuPutable(AndroidMenuPutable putable) {
+		super.setMenuPutable(putable);
 	}
 
 	@Override
@@ -34,14 +35,14 @@ public class HudFragment extends AndroidMenu {
 		view.findViewById(R.id.button_build).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				getPutable().showMenuFragment(buildMenu);
+				getPutable().showMenuFragment(new BuildMenu());
 			}
 		});
 
 		view.findViewById(R.id.button_menu).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				getPutable().showMenuFragment(gameMenu);
+				getPutable().showMenuFragment(new GameMenu());
 			}
 		});
 
@@ -56,8 +57,8 @@ public class HudFragment extends AndroidMenu {
 	}
 
 	@Override
-	public void onStop() {
+	public void onDestroyView() {
 		getPutable().getChangeObserveable().removeMapSelectionListener(selectionSetter);
-		super.onStop();
+		super.onDestroyView();
 	}
 }

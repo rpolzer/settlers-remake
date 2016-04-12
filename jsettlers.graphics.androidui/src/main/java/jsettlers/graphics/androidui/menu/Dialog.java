@@ -25,8 +25,8 @@ import android.widget.TextView;
 
 public abstract class Dialog extends AndroidMenu {
 
-	public Dialog(AndroidMenuPutable puttable) {
-		super(puttable);
+	public Dialog() {
+		super();
 	}
 
 	@Override

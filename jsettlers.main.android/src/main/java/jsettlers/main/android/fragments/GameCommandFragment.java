@@ -57,7 +57,8 @@ public class GameCommandFragment extends JsettlersFragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
-		hudBase = new HudFragment(getPutable(getActivity()));
+		hudBase = new HudFragment();
+		hudBase.setMenuPutable(getPutable(getActivity()));
 		super.onCreate(savedInstanceState);
 	}
 

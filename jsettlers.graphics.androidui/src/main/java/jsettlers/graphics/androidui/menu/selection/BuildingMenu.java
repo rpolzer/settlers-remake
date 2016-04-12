@@ -147,9 +147,8 @@ public class BuildingMenu extends AndroidMenu {
 		addSpace(tabs);
 
 		if (building.getBuildingType().getWorkradius() > 0) {
-			ImageButton button =
-					generateImageButtonTab(tabs,
-							R.drawable.building_set_workarea);
+			ImageButton button = generateImageButtonTab(tabs,
+					R.drawable.building_set_workarea);
 			button.setOnClickListener(generateActionListener(
 					new ExecutableAction() {
 						@Override
@@ -160,27 +159,23 @@ public class BuildingMenu extends AndroidMenu {
 		}
 
 		{
-			workButton =
-					generateImageButtonTab(tabs,
-							R.drawable.building_start_working);
+			workButton = generateImageButtonTab(tabs,
+					R.drawable.building_start_working);
 			workButton.setOnClickListener(generateActionListener(
 					new SetBuildingPriorityAction(EPriority.LOW), false));
-			pauseButton =
-					generateImageButtonTab(tabs,
-							R.drawable.building_stop_working);
+			pauseButton = generateImageButtonTab(tabs,
+					R.drawable.building_stop_working);
 			pauseButton.setOnClickListener(generateActionListener(
 					new SetBuildingPriorityAction(EPriority.STOPPED), false));
 			// highPriorityButton = generateImageButtonTab(tabs,
 			// R.drawable.building_);
 			reloadWorkingButton(building.getPriority());
 
-			ImageButton destroyButton =
-					generateImageButtonTab(tabs, R.drawable.building_destroy);
+			ImageButton destroyButton = generateImageButtonTab(tabs, R.drawable.building_destroy);
 			destroyButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					getPutable().showMenuFragment(
-							new DestroyBuildingDialog(getPutable()));
+					getPutable().showMenuFragment(new DestroyBuildingDialog());
 				}
 			});
 		}
@@ -230,8 +225,7 @@ public class BuildingMenu extends AndroidMenu {
 	}
 
 	private void addMaterialTab(TableLayout tabs, IBuildingMaterial mat) {
-		ImageButton button =
-				generateImageButtonTab(tabs, OriginalImageProvider.get(mat.getMaterialType()));
+		ImageButton button = generateImageButtonTab(tabs, OriginalImageProvider.get(mat.getMaterialType()));
 
 		TextView count = new TextView(getContext());
 		count.setText(mat.getMaterialCount() + "");

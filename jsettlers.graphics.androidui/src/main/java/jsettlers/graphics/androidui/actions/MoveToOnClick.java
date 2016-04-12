@@ -22,12 +22,22 @@ import jsettlers.graphics.localization.Labels;
 
 public class MoveToOnClick extends ContextAction {
 
+	private final boolean auto;
+	private final boolean force;
+	private final boolean work;
+
 	public MoveToOnClick() {
-		this(false);
+		this(true, false, true);
 	}
 
-	public MoveToOnClick(boolean force) {
+	public MoveToOnClick(boolean force, boolean work) {
+	this(false, force, work);
+	}
 
+	private MoveToOnClick(boolean auto, boolean force, boolean work) {
+		this.auto = auto;
+		this.force = force;
+		this.work = work;
 	}
 
 	@Override
@@ -37,8 +47,11 @@ public class MoveToOnClick extends ContextAction {
 
 	@Override
 	public IAction replaceAction(IAction action) {
+		if (auto) {
+			//TODO: click duration?
+		}
 		if (action.getActionType() == EActionType.SELECT_POINT) {
-			return new MoveToAction(((PointAction) action).getPosition(), false, false);
+			return new MoveToAction(((PointAction) action).getPosition(), force, work);
 		}
 		return super.replaceAction(action);
 	}

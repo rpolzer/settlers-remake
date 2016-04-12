@@ -14,12 +14,17 @@ import android.os.Handler;
  *
  */
 public class MapViewChangeObserveable {
+
+	public ISelectionSet getCurrentSelection() {
+		return selection;
+	}
+
 	public interface IMapViewListener {
 		/**
 		 * Called whenever the map view changed. Always called in the UI thread.
 		 * 
-		 * @param newSelection
-		 *            The selection.
+		 * @param mapView
+		 *            The new map view area..
 		 */
 		public void mapViewChanged(MapRectangle mapView);
 	}
@@ -30,7 +35,7 @@ public class MapViewChangeObserveable {
 		 * 
 		 * @param newSelection
 		 */
-		public void mapSelectionChanged(ISelectionSet newSelection);
+		void mapSelectionChanged(ISelectionSet newSelection);
 	}
 
 	private final class FireMapViewChanged implements Runnable {
@@ -57,14 +62,15 @@ public class MapViewChangeObserveable {
 
 		@Override
 		public void run() {
+			selection = newSelection;
 			for (IMapSelectionListener l : selectionListeners) {
 				l.mapSelectionChanged(newSelection);
 			}
 		}
 	}
 
-	private MapRectangle mapView;
 	private final Handler handler;
+	private ISelectionSet selection = ISelectionSet.EMPTY;
 
 	private CopyOnWriteArrayList<IMapViewListener> viewListeners = new CopyOnWriteArrayList<IMapViewListener>();
 	private CopyOnWriteArrayList<IMapSelectionListener> selectionListeners = new CopyOnWriteArrayList<IMapSelectionListener>();
@@ -74,11 +80,11 @@ public class MapViewChangeObserveable {
 	}
 
 	protected void fireMapViewChanged(final MapRectangle newView) {
-		mapView = newView;
 		handler.post(new FireMapViewChanged(newView));
 	}
 
 	protected void fireMapSelectionChanged(final ISelectionSet newSelection) {
+		System.out.println("Game logic told us of selection change.");
 		handler.post(new FireMapSelectionChanged(newSelection));
 	}
 

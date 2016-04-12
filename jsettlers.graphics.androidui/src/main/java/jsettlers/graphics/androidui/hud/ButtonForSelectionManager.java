@@ -8,6 +8,9 @@ import jsettlers.graphics.androidui.MapViewChangeObserveable.IMapSelectionListen
 import jsettlers.graphics.androidui.R;
 import jsettlers.graphics.androidui.menu.AndroidMenuPutable;
 import jsettlers.graphics.androidui.menu.selection.BuildingMenu;
+import jsettlers.graphics.androidui.menu.selection.SelectionMenu;
+import jsettlers.graphics.androidui.menu.selection.SoldierSelectionMenu;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -25,7 +28,7 @@ public class ButtonForSelectionManager implements IMapSelectionListener, OnClick
 	public ButtonForSelectionManager(AndroidMenuPutable putable, ImageButton button) {
 		this.putable = putable;
 		this.button = button;
-		mapSelectionChanged(null);
+		mapSelectionChanged(putable.getChangeObserveable().getCurrentSelection());
 		button.setOnClickListener(this);
 	}
 
@@ -55,6 +58,7 @@ public class ButtonForSelectionManager implements IMapSelectionListener, OnClick
 	@Override
 	public void onClick(View v) {
 		if (selection != null) {
+			SelectionMenu menu = null;
 			switch (selection.getSelectionType()) {
 			case BUILDING:
 				IBuilding building = (IBuilding) selection.get(0);
@@ -62,6 +66,14 @@ public class ButtonForSelectionManager implements IMapSelectionListener, OnClick
 				IPartitionData partitionData = putable.getMapContext().getMap().getPartitionData(pos.x, pos.y);
 				putable.showMenuFragment(new BuildingMenu(putable, building, partitionData));
 				break;
+			case SOLDIERS:
+				menu = new SoldierSelectionMenu();
+				break;
+			}
+
+			if (menu != null) {
+				menu.setSelection(selection);
+				putable.showMenuFragment(menu);
 			}
 		}
 	}

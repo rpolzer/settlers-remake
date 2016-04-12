@@ -41,8 +41,8 @@ public class BuildMenu extends AndroidMenu {
 
 	private HashMap<EBuildingType, TextView> buildingCounts = new HashMap<EBuildingType, TextView>();
 
-	public BuildMenu(AndroidMenuPutable androidMenuPutable) {
-		super(androidMenuPutable);
+	public BuildMenu() {
+		super();
 	}
 
 	@Override

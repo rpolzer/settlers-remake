@@ -28,8 +28,16 @@ public abstract class AndroidMenu extends Fragment implements Hideable {
 	private AndroidMenuPutable putable;
 	private boolean backgroundAlreadyClicked;
 
-	public AndroidMenu(AndroidMenuPutable puttable) {
-		this.putable = puttable;
+	public AndroidMenu() {
+	}
+
+	@Deprecated
+	public AndroidMenu(AndroidMenuPutable putable) {
+		setMenuPutable(putable);
+	}
+
+	public void setMenuPutable(AndroidMenuPutable putable) {
+		this.putable = putable;
 	}
 
 	protected Context getContext() {
