@@ -71,6 +71,7 @@ import jsettlers.common.material.EMaterialType;
 import jsettlers.common.material.ESearchType;
 import jsettlers.common.movable.EDirection;
 import jsettlers.common.movable.EMovableType;
+import jsettlers.common.movable.ESoldierType;
 import jsettlers.common.movable.IMovable;
 import jsettlers.common.player.IPlayerable;
 import jsettlers.common.position.RelativePoint;
@@ -1262,7 +1263,7 @@ public final class MainGrid implements Serializable {
 
 			if (movable.isAttackable()) {
 				movableGrid.informMovables(movable, position.x, position.y, informFullArea);
-				objectsGrid.informObjectsAboutAttackble(position, movable, informFullArea, !EMovableType.isBowman(movable.getMovableType()));
+				objectsGrid.informObjectsAboutAttackble(position, movable, informFullArea, !ESoldierType.BOWMAN.isOfType(movable.getMovableType()));
 			}
 		}
 
@@ -1323,7 +1324,7 @@ public final class MainGrid implements Serializable {
 		@Override
 		public IAttackable getEnemyInSearchArea(final ShortPoint2D position, final IAttackable searchingAttackable, final short minSearchRadius,
 				final short maxSearchRadius, final boolean includeTowers) {
-			boolean isBowman = EMovableType.isBowman(searchingAttackable.getMovableType());
+			boolean isBowman = ESoldierType.BOWMAN.isOfType(searchingAttackable.getMovableType());
 
 			IAttackable enemy = getEnemyInSearchArea(searchingAttackable.getPlayerId(), new HexGridArea(position.x, position.y, minSearchRadius,
 					maxSearchRadius), isBowman, includeTowers);

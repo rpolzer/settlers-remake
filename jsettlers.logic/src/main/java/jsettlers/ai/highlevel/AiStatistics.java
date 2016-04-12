@@ -43,6 +43,7 @@ import jsettlers.common.mapobject.EMapObjectType;
 import jsettlers.common.material.EMaterialType;
 import jsettlers.common.movable.EDirection;
 import jsettlers.common.movable.EMovableType;
+import jsettlers.common.movable.ESoldierType;
 import jsettlers.common.movable.IMovable;
 import jsettlers.common.position.RelativePoint;
 import jsettlers.common.position.ShortPoint2D;
@@ -205,7 +206,7 @@ public class AiStatistics {
 					movablePlayerStatistic.movablePositions.get(movableType).add(movable.getPos());
 					if (player != null
 							&& player.playerId != movablePlayerId
-							&& EMovableType.isSoldier(movableType)
+							&& ESoldierType.isSoldier(movableType)
 							&& getEnemiesOf(player.playerId).contains(movablePlayerId)) {
 						playerStatistics[player.playerId].enemyTroopsInTown.addNoCollission(movable.getPos().x, movable.getPos().y);
 					}

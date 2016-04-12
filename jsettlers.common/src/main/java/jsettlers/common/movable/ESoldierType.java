@@ -14,33 +14,53 @@
  *******************************************************************************/
 package jsettlers.common.movable;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 /**
  * @author codingberlin
  * @author Andreas Eberle
  */
 public enum ESoldierType {
-	BOWMAN,
-	SWORDSMAN,
-	PIKEMAN;
+	BOWMAN(ESoldierClass.BOWMAN, EMovableType.BOWMAN_L1, EMovableType.BOWMAN_L2, EMovableType.BOWMAN_L3),
+	SWORDSMAN(ESoldierClass.INFANTRY, EMovableType.SWORDSMAN_L1, EMovableType.SWORDSMAN_L2, EMovableType.SWORDSMAN_L3),
+	PIKEMAN(ESoldierClass.INFANTRY, EMovableType.PIKEMAN_L1, EMovableType.PIKEMAN_L2, EMovableType.PIKEMAN_L3);
 
 	public static final ESoldierType[] VALUES = ESoldierType.values();
-	public static final int NUMBER_OF_VALUES = VALUES.length;
+	private static final Set<EMovableType> allSoldiers = EnumSet.noneOf(EMovableType.class);
+	static {
+		for (ESoldierType v : VALUES) {
+			allSoldiers.addAll(v.getAllOfType());
+		}
+	}
 
 	public final int ordinal;
+	private final EnumSet<EMovableType> types;
+	private final ESoldierClass soldierClass;
 
-	private ESoldierType() {
+	ESoldierType(ESoldierClass soldierClass, EMovableType type1, EMovableType... types) {
+		this.soldierClass = soldierClass;
 		this.ordinal = ordinal();
+		this.types = EnumSet.of(type1, types);
 	}
 
 	public ESoldierClass getSoldierClass() {
-		switch (this) {
-		case BOWMAN:
-			return ESoldierClass.BOWMAN;
-		case SWORDSMAN:
-		case PIKEMAN:
-			return ESoldierClass.INFANTRY;
-		default:
-			return null;
-		}
+		return soldierClass;
+	}
+
+	public boolean isOfType(EMovableType movableType) {
+		return types.contains(movableType);
+	}
+
+	public Set<EMovableType> getAllOfType() {
+		return types;
+	}
+
+	public static Set<EMovableType> getAllSoldiers() {
+		return allSoldiers;
+	}
+
+	public static boolean isSoldier(EMovableType movableType) {
+		return getAllSoldiers().contains(movableType);
 	}
 }
