@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015
+ * Copyright (c) 2015, 2016
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -18,15 +18,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jsettlers.common.images.EImageLinkType;
+import jsettlers.common.images.OriginalImageLink;
 import jsettlers.common.material.EMaterialType;
 import jsettlers.common.movable.EDirection;
 import jsettlers.common.movable.EMovableAction;
 import jsettlers.common.movable.EMovableType;
 import jsettlers.common.movable.IMovable;
-import jsettlers.common.resources.ResourceManager;
 import jsettlers.graphics.image.Image;
 import jsettlers.graphics.map.draw.ImageProvider;
 
@@ -37,20 +41,20 @@ import jsettlers.graphics.map.draw.ImageProvider;
  * 
  * @author michael
  */
-public final class SettlerImageMap {
+public class SettlerImageMap {
 
-	private static final SettlerImageMapItem DEFAULT_ITEM = new SettlerImageMapItem(10, 0, 0, 1);
+	private static final OriginalImageLink DEFAULT_ITEM = new OriginalImageLink(EImageLinkType.SETTLER, 10, 0, 0);
 
 	private static SettlerImageMap instance;
 
-	private final ImageProvider imageProvider = ImageProvider.getInstance();
-
-	private final SettlerImageMapItem[][][][] map;
-
-	private final Pattern linePattern = Pattern.compile("\\s*([\\w\\*]+)\\s*,"
-			+ "\\s*([\\w\\*]+)\\s*," + "\\s*([\\w\\*]+)\\s*,"
-			+ "\\s*([\\w\\*]+)\\s*" + "=\\s*(\\d+)\\s*," + "\\s*(\\d+)\\s*,"
-			+ "\\s*(\\d+)\\s*," + "\\s*(-?\\d+)\\s*");
+	/**
+	 * This is a map.
+	 * Argument 0: Movable Type
+	 * Argument 1: Movable Action
+	 * Argument 2: Material type
+	 * Argument 3: Direction
+	 */
+	private final OriginalImageLink[][][][] map;
 
 	private final int types;
 
@@ -63,20 +67,81 @@ public final class SettlerImageMap {
 	/**
 	 * Creates a new settler image map.
 	 */
-	private SettlerImageMap() {
+	SettlerImageMap() {
 		this.types = EMovableType.NUMBER_OF_MOVABLETYPES;
 		this.actions = EMovableAction.values().length;
 		this.materials = EMaterialType.NUMBER_OF_MATERIALS;
 		this.directions = EDirection.VALUES.length;
-		this.map = new SettlerImageMapItem[this.types][this.actions][this.materials][this.directions];
+		this.map = new OriginalImageLink[this.types][this.actions][][];
 
 		try {
 			InputStream file = getClass().getResourceAsStream("movables.txt");
-			readFromFile(file);
+			ArrayList<ImageLine> lines = readFromFile(file);
+
+			for (ImageLine line : lines) {
+				addLine(line);
+			}
+
 		} catch (IOException e) {
-			System.err.println("Error reading image file. "
-					+ "Settler images might not work.");
+			onIOException(e);
 		}
+	}
+
+	protected void onIOException(IOException e) {
+		System.err.println("Error reading image file: " + e.getMessage()
+				+ "; Settler images might not work.");
+	}
+
+	private void addLine(final ImageLine line) {
+		OriginalImageLink[][][][] typeArray = map;
+		OriginalImageLink[][][] actionArray = getOrCreateArray(line.typeIndex, map, new EntryProducer<OriginalImageLink[][][]>() {
+			@Override
+			public OriginalImageLink[][][] newEntry() {
+				return new OriginalImageLink[actions][][];
+			}
+		});
+		OriginalImageLink[][] materialArray = getOrCreateArray(line.actionIndex, actionArray, new EntryProducer<OriginalImageLink[][]>() {
+			@Override
+			public OriginalImageLink[][] newEntry() {
+				return new OriginalImageLink[materials][];
+			}
+		});
+		OriginalImageLink[] directionArray = getOrCreateArray(line.materialIndex, materialArray, new EntryProducer<OriginalImageLink[]>() {
+			@Override
+			public OriginalImageLink[] newEntry() {
+				return new OriginalImageLink[directions];
+			}
+		});
+		getOrCreateArray(line.directionIndex, directionArray, new EntryProducer<OriginalImageLink>() {
+			@Override
+			public OriginalImageLink newEntry() {
+				return line.image;
+			}
+		});
+	}
+
+	private <T> T getOrCreateArray(int lineIndex, T[] baseArray, EntryProducer<T> arrayProducer) {
+		T result;
+		if (lineIndex < 0) {
+			// we can be sure that all actions before us had line.actionIndex < 0
+			// all objects in typeArray are equal.
+			result = baseArray[0];
+			if (result == null) {
+				result = arrayProducer.newEntry();
+				Arrays.fill(baseArray, result);
+			}
+		} else {
+			result = baseArray[lineIndex];
+			if (result == null) {
+				result = arrayProducer.newEntry();
+				baseArray[lineIndex] = result;
+			}
+		}
+		return result;
+	}
+
+	private interface EntryProducer<T> {
+		T newEntry();
 	}
 
 	/**
@@ -84,25 +149,18 @@ public final class SettlerImageMap {
 	 * 
 	 * @param file
 	 *            The file to read from.
+	 *            @return A list of lines.
 	 */
-	private void readFromFile(InputStream file) throws IOException {
-		int[][][][] priorities = new int[this.types][this.actions][this.materials][this.directions];
-
-		// add pseudo entry.
-		addEntryToMap(priorities, null, null, null, null, DEFAULT_ITEM, -1);
-
-		readFromFile(file, priorities);
-	}
-
-	private void readFromFile(InputStream file, int[][][][] priorities)
+	private ArrayList<ImageLine> readFromFile(InputStream file)
 			throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(file));
 
+		ArrayList<ImageLine> lines = new ArrayList<>();
 		String line = reader.readLine();
 		while (line != null) {
 			if (!line.isEmpty() && !line.startsWith("#")) {
 				try {
-					addByLine(priorities, line);
+					lines.add(new ImageLine(line));
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				}
@@ -110,181 +168,9 @@ public final class SettlerImageMap {
 
 			line = reader.readLine();
 		}
-	}
+		Collections.sort(lines);
 
-	/**
-	 * Adds a line to the map
-	 * 
-	 * @param priorities
-	 *            The priority table to use.
-	 * @param line
-	 *            The line.
-	 * @throws IllegalArgumentException
-	 *             if the line is not correct.
-	 */
-	private void addByLine(int[][][][] priorities, String line) {
-		final Matcher matcher = parseLine(line);
-		final String typeString = matcher.group(1);
-		final String actionString = matcher.group(2);
-		final String materialString = matcher.group(3);
-		final String directionString = matcher.group(4);
-
-		EMovableType type = parseType(typeString);
-		EMovableAction action = parseAction(actionString);
-		EMaterialType material = parseMaterial(materialString);
-		EDirection direction = parseDirection(directionString);
-
-		int priority = calculatePriority(type, action, material, direction);
-
-		final int fileIndex = Integer.parseInt(matcher.group(5));
-		final int sequence = Integer.parseInt(matcher.group(6));
-		final int start = Integer.parseInt(matcher.group(7));
-		final int duration = Integer.parseInt(matcher.group(8));
-
-		addEntryToMap(priorities, type, action, material, direction,
-				new SettlerImageMapItem(fileIndex, sequence, start, duration),
-				priority);
-	}
-
-	private EMovableType parseType(final String typeString) {
-		EMovableType type;
-		if ("*".equals(typeString)) {
-			type = null;
-		} else {
-			type = EMovableType.valueOf(typeString);
-		}
-		return type;
-	}
-
-	private EMovableAction parseAction(final String actionString) {
-		EMovableAction action;
-		if ("*".equals(actionString)) {
-			action = null;
-		} else {
-			action = EMovableAction.valueOf(actionString);
-		}
-		return action;
-	}
-
-	private EMaterialType parseMaterial(final String materialString) {
-		EMaterialType material;
-		if ("*".equals(materialString)) {
-			material = null;
-		} else {
-			material = EMaterialType.valueOf(materialString);
-		}
-		return material;
-	}
-
-	private EDirection parseDirection(final String directionString) {
-		EDirection direction;
-		if ("*".equals(directionString)) {
-			direction = null;
-		} else {
-			direction = EDirection.valueOf(directionString);
-		}
-		return direction;
-	}
-
-	private int calculatePriority(EMovableType type, EMovableAction action,
-			EMaterialType material, EDirection direction) {
-		int priority = 1;// more than 0.
-		if (type != null) {
-			priority += 10;
-		}
-		if (action != null) {
-			priority += 100;
-		}
-		if (material != null) {
-			priority += 1000;
-		}
-		if (direction != null) {
-			priority += 10000;
-		}
-		return priority;
-	}
-
-	/**
-	 * Parses a line.
-	 * 
-	 * @param line
-	 *            The line.
-	 * @return The line matched against the line pattern.
-	 * @throws IllegalArgumentException
-	 *             if the line is not correct.
-	 */
-	private Matcher parseLine(String line) {
-		final Matcher matcher = this.linePattern.matcher(line);
-		final boolean matches = matcher.matches();
-		if (!matches) {
-			throw new IllegalArgumentException("Invalid line syntax: " + line); // ignore
-		}
-		return matcher;
-	}
-
-	/**
-	 * Adds an entry to the map. Overrides cells with lower priorities.
-	 * 
-	 * @param priorities
-	 *            The priority table to use.
-	 * @param type
-	 * @param action
-	 * @param material
-	 * @param direction
-	 * @param item
-	 * @param priority
-	 */
-	private void addEntryToMap(int[][][][] priorities, EMovableType type,
-			EMovableAction action, EMaterialType material, EDirection direction,
-			SettlerImageMapItem item, int priority) {
-		int minType, maxType;
-		if (type == null) {
-			minType = 0;
-			maxType = this.types;
-		} else {
-			minType = type.ordinal();
-			maxType = minType + 1;
-		}
-
-		int minAction, maxAction;
-		if (action == null) {
-			minAction = 0;
-			maxAction = this.actions;
-		} else {
-			minAction = action.ordinal();
-			maxAction = minAction + 1;
-		}
-
-		int minMaterial, maxMaterial;
-		if (material == null) {
-			minMaterial = 0;
-			maxMaterial = this.materials;
-		} else {
-			minMaterial = material.ordinal();
-			maxMaterial = minMaterial + 1;
-		}
-
-		int minDirection, maxDirection;
-		if (direction == null) {
-			minDirection = 0;
-			maxDirection = this.directions;
-		} else {
-			minDirection = direction.ordinal();
-			maxDirection = minDirection + 1;
-		}
-
-		for (int typeIndex = minType; typeIndex < maxType; typeIndex++) {
-			for (int actionIndex = minAction; actionIndex < maxAction; actionIndex++) {
-				for (int materialIndex = minMaterial; materialIndex < maxMaterial; materialIndex++) {
-					for (int direcitonIndex = minDirection; direcitonIndex < maxDirection; direcitonIndex++) {
-						if (priorities[typeIndex][actionIndex][materialIndex][direcitonIndex] < priority) {
-							this.map[typeIndex][actionIndex][materialIndex][direcitonIndex] = item;
-							priorities[typeIndex][actionIndex][materialIndex][direcitonIndex] = priority;
-						}
-					}
-				}
-			}
-		}
+		return lines;
 	}
 
 	/**
@@ -324,16 +210,16 @@ public final class SettlerImageMap {
 	 */
 	public Image getImageForSettler(EMovableType movableType, EMovableAction action,
 			EMaterialType material, EDirection direction, float progress) {
-		SettlerImageMapItem item = getMapItem(movableType, action, material, direction);
+		OriginalImageLink item = getMapItem(movableType, action, material, direction);
 
-		int duration = item.getDuration();
+		int duration = item.getLength();
 		int imageIndex;
 		if (duration >= 0) {
-			imageIndex = item.getStart() + Math.min((int) (progress * duration), duration - 1);
+			imageIndex = Math.min((int) (progress * duration), duration - 1);
 		} else {
-			imageIndex = item.getStart() + Math.max((int) (progress * duration), duration + 1);
+			imageIndex = Math.max((int) (progress * duration), duration + 1);
 		}
-		return this.imageProvider.getSettlerSequence(item.getFile(), item.getSequenceIndex()).getImageSafe(imageIndex);
+		return ImageProvider.getInstance().getSequencedImage(item, imageIndex);
 	}
 
 	/**
@@ -343,12 +229,11 @@ public final class SettlerImageMap {
 	 * @param action
 	 * @param material
 	 * @param direction
-	 * @param progress
 	 * @return The item of the map at the given position. Is not null.
 	 */
-	private SettlerImageMapItem getMapItem(EMovableType movableType,
+	private OriginalImageLink getMapItem(EMovableType movableType,
 			EMovableAction action, EMaterialType material, EDirection direction) {
-		SettlerImageMapItem item = this.map[movableType.ordinal()][action.ordinal()][material
+		OriginalImageLink item = this.map[movableType.ordinal()][action.ordinal()][material
 				.ordinal()][direction.ordinal()];
 		if (item == null) {
 			return DEFAULT_ITEM;
@@ -362,5 +247,75 @@ public final class SettlerImageMap {
 			instance = new SettlerImageMap();
 		}
 		return instance;
+	}
+	private static class ImageLine implements  Comparable<ImageLine> {
+		private final int typeIndex;
+		private final int actionIndex;
+		private final int directionIndex;
+		private final int materialIndex;
+		private final OriginalImageLink image;
+
+		ImageLine(String line) throws IOException {
+			Matcher matcher = matchLine(line);
+			typeIndex = convertEnum(matcher.group(1), EMovableType.class);
+			if (typeIndex < 0) {
+				throw new IOException("Cannot have generic type: " + line);
+			}
+			actionIndex = convertEnum(matcher.group(2), EMovableAction.class);
+			materialIndex = convertEnum(matcher.group(3), EMaterialType.class);
+			directionIndex = convertEnum(matcher.group(4), EDirection.class);
+
+			final int fileIndex = Integer.parseInt(matcher.group(5));
+			final int sequence = Integer.parseInt(matcher.group(6));
+			final int start = Integer.parseInt(matcher.group(7));
+			final int duration = Integer.parseInt(matcher.group(8));
+
+			image = new OriginalImageLink(EImageLinkType.SETTLER, fileIndex, sequence, start, duration);
+		}
+
+		/**
+		 * Parses a line.
+		 *
+		 * @param line
+		 *            The line.
+		 * @return The line matched against the line pattern.
+		 * @throws IllegalArgumentException
+		 *             if the line is not correct.
+		 */
+		private Matcher matchLine(String line) {
+			Pattern linePattern = Pattern.compile("\\s*([\\w\\*]+)\\s*,"
+					+ "\\s*([\\w\\*]+)\\s*," + "\\s*([\\w\\*]+)\\s*,"
+					+ "\\s*([\\w\\*]+)\\s*" + "=\\s*(\\d+)\\s*," + "\\s*(\\d+)\\s*,"
+					+ "\\s*(\\d+)\\s*," + "\\s*(-?\\d+)\\s*");
+			final Matcher matcher = linePattern.matcher(line);
+			final boolean matches = matcher.matches();
+			if (!matches) {
+				throw new IllegalArgumentException("Invalid line syntax: " + line); // ignore
+			}
+			return matcher;
+		}
+
+		private int convertEnum(String token, Class<? extends  Enum> clazz) {
+			if ("*".equals(token)) {
+				return -1;
+			} else {
+				return Enum.valueOf(clazz, token).ordinal();
+			}
+		}
+
+		@Override
+		public int compareTo(ImageLine o) {
+			int c = Integer.compare(directionIndex, o.directionIndex);
+			if (c == 0) {
+				c = Integer.compare(materialIndex, o.materialIndex);
+			}
+			if (c == 0) {
+				c = Integer.compare(actionIndex, o.actionIndex);
+			}
+			if (c == 0) {
+				c = Integer.compare(typeIndex, o.typeIndex);
+			}
+			return c;
+		}
 	}
 }

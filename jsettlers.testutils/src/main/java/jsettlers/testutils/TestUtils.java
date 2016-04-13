@@ -28,12 +28,12 @@ import java.util.Map;
 import jsettlers.common.resources.IResourceProvider;
 import jsettlers.common.resources.ResourceManager;
 import jsettlers.common.utils.OptionableProperties;
-import jsettlers.main.swing.resources.SwingResourceLoader;
 import jsettlers.logic.map.loading.MapLoader;
 import jsettlers.logic.map.loading.list.IListedMap;
 import jsettlers.logic.map.loading.list.IMapLister;
 import jsettlers.logic.map.loading.list.MapList;
 import jsettlers.logic.map.loading.newmap.MapFileHeader;
+import jsettlers.main.swing.resources.SwingResourceLoader;
 
 /**
  * Utility class holding methods needed by serveral test classes.

@@ -22,12 +22,10 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-
 import jsettlers.common.images.DirectImageLink;
 import jsettlers.common.images.EImageLinkType;
 import jsettlers.common.images.ImageLink;
 import jsettlers.common.images.OriginalImageLink;
-//import jsettlers.common.images.TextureMap;
 import jsettlers.graphics.image.GuiImage;
 import jsettlers.graphics.image.Image;
 import jsettlers.graphics.image.ImageIndexFile;
@@ -40,6 +38,8 @@ import jsettlers.graphics.reader.DatFileType;
 import jsettlers.graphics.reader.SequenceList;
 import jsettlers.graphics.sequence.ArraySequence;
 import jsettlers.graphics.sequence.Sequence;
+
+//import jsettlers.common.images.TextureMap;
 
 /**
  * This is the main image provider. It provides access to all images.
@@ -213,7 +213,7 @@ public final class ImageProvider {
 	 *            must be an integer from 0 to 2.
 	 * @return the image matching the specified indexes.
 	 */
-	private Image getSequencedImage(OriginalImageLink link, int sequenceNumber) {
+	public Image getSequencedImage(OriginalImageLink link, int sequenceNumber) {
 		if (link.getType() == EImageLinkType.SETTLER) {
 			return getSettlerSequence(link.getFile(), link.getSequence()).getImageSafe(link.getImage() + sequenceNumber);
 		} else {
@@ -344,4 +344,5 @@ public final class ImageProvider {
 	public void addPreloadTask(GLPreloadTask task) {
 		tasks.add(task);
 	}
+
 }

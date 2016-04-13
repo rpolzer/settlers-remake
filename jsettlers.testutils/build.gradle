@@ -1,5 +1,27 @@
 apply plugin: 'java'
 
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+def agentJarName = "testagent.jar"
+
+
+task agentJar(type: Jar, dependsOn: classes) {
+    manifest {
+        attributes("Premain-Class": "jsettlers.testutils.SizeFetcher")
+    }
+    from (sourceSets.main.output) {
+        include "**/SizeFetcher.*"
+    }
+    archiveName agentJarName
+}
+
+artifacts {
+    archives agentJar
+}
+
 dependencies {
     compile 'junit:junit:4.12'
     compile project(':jsettlers.main.swing')

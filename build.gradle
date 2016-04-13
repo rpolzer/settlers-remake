@@ -32,6 +32,11 @@ subprojects {
 			testCompile 'junit:junit:4.12'
 			testCompile project(':jsettlers.testutils')
 		}
+		test {
+            doFirst {
+                jvmArgs '-javaagent:' + project(":jsettlers.testutils").agentJar.archivePath
+            }
+		}
 	}
 	plugins.withType(ApplicationPlugin).whenPluginAdded {
 		startScripts {

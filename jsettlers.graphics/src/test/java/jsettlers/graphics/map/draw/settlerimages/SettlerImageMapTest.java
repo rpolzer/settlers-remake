@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015
+ * Copyright (c) 2016
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -14,42 +14,50 @@
  *******************************************************************************/
 package jsettlers.graphics.map.draw.settlerimages;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+import java.io.IOException;
+
+import jsettlers.testutils.SizeStats;
+
 /**
- * This is a map item of settler images.
- * 
- * @author michael
- *
+ * @author  Michael Zangl
  */
-public class SettlerImageMapItem {
-	private final int file;
+public class SettlerImageMapTest {
 
-	private final int sequenceIndex;
-
-	private final int start;
-
-	private final int duration;
-
-	public SettlerImageMapItem(int file, int sequenceIndex, int start,
-			int duration) {
-		this.file = file;
-		this.sequenceIndex = sequenceIndex;
-		this.start = start;
-		this.duration = duration;
+	@Test
+	public void testIsLoading() {
+		long start = System.currentTimeMillis();
+		SettlerImageMap map = new SettlerImageMap() {
+			@Override
+			protected void onIOException(IOException e) {
+				e.printStackTrace();
+				fail();
+			}
+		};
 	}
 
-	public int getFile() {
-		return this.file;
+	@Test
+	public void testSize() {
+		SettlerImageMap map = new SettlerImageMap();
+
+		assertTrue("Size below 200kB", computeSize(map) < 200000);
 	}
 
-	public int getSequenceIndex() {
-		return this.sequenceIndex;
+	private long computeSize(Object o) {
+		try {
+			SizeStats stats = new SizeStats();
+			stats.computeSize(o);
+			return stats.getTotalSize();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			fail();
+			return 0;
+		}
 	}
 
-	public int getStart() {
-		return this.start;
-	}
-
-	public int getDuration() {
-		return this.duration;
-	}
 }
