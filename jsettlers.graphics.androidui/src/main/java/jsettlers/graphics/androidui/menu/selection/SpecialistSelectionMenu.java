@@ -18,57 +18,38 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import jsettlers.common.images.ImageLink;
 import jsettlers.common.movable.EMovableType;
-import jsettlers.common.movable.ESoldierLevel;
-import jsettlers.common.movable.ESoldierType;
+import jsettlers.graphics.action.ConvertAction;
 import jsettlers.graphics.androidui.R;
 
 /**
- * The menu that gets displayed when a soldier is selected.
  * @author Michael Zangl
  */
-public class SoldierSelectionMenu extends SelectionMenu {
-
+public class SpecialistSelectionMenu extends SelectionMenu {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.selection_soldier, container, false);
+		return inflater.inflate(R.layout.selection_specialist, container, false);
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		loadButton(view, R.id.selection_soldier_swordsmen, R.id.selection_soldier_swordsmen_button, ESoldierType.SWORDSMAN, IMAGE_SWORDSMAN);
-		loadButton(view, R.id.selection_soldier_bowmen, R.id.selection_soldier_bowmen_button, ESoldierType.BOWMAN, IMAGE_BOWMAN);
-		loadButton(view, R.id.selection_soldier_pikemen, R.id.selection_soldier_pikemen_button, ESoldierType.PIKEMAN, IMAGE_PIKEMAN);
-		loadButton(view, R.id.selection_soldier_priest, R.id.selection_soldier_priest_button, selection.getMovableCount(EMovableType.BEARER) + "", IMAGE_PRIEST);
+		loadButton(view, R.id.selection_specialist_geologist, R.id.selection_specialist_geologist_button,
+				selection.getMovableCount(EMovableType.GEOLOGIST) + "", IMAGE_GEOLOGIST);
+		loadButton(view, R.id.selection_specialist_thief, R.id.selection_specialist_thief_button, selection.getMovableCount(EMovableType.THIEF) + "",
+				IMAGE_THIEF);
+		loadButton(view, R.id.selection_specialist_pioneer, R.id.selection_specialist_pioneer_button,
+				selection.getMovableCount(EMovableType.PIONEER) + "", IMAGE_PIONEER);
 
-		loadMoveButton(view, R.id.selection_soldier_move);
-		loadDoWorkButton(view, R.id.selection_soldier_attack);
-	}
+		loadMoveButton(view, R.id.selection_specialist_move);
+		loadDoWorkButton(view, R.id.selection_specialist_work);
 
-	private void loadButton(View view, int textId, int buttonId, ESoldierType type, ImageLink image) {
-		int[] count = new int[ESoldierLevel.values().length];
-		for (EMovableType m : type.getAllOfType()) {
-			count[m.getLevel().ordinal()] += selection.getMovableCount(m);
-		}
+		Button convert = (Button) view.findViewById(R.id.selection_specialist_pioneer_convert);
+		convert.setOnClickListener(generateActionListener(new ConvertAction(EMovableType.BEARER, Short.MAX_VALUE), false));
 
-		int max = count.length - 1;
-		while (max > 0 && count[max] == 0) {
-			// Skip high level zeros.
-			max--;
-		}
-		StringBuilder string = new StringBuilder();
-		for (int i = 0; i <= max; i++) {
-			if (i != 0) {
-				string.append(" ");
-			}
-			string.append(count[i]);
-		}
-
-		loadButton(view, textId, buttonId, string.toString(), image);
 	}
 }

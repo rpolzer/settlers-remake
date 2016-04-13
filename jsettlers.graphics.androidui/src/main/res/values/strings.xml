@@ -16,4 +16,5 @@
     <string name="selection_movable_move">Move to</string>
     <string name="selection_soldier_attack">Attack</string>
     <string name="selection_specialist_work">Work at</string>
+    <string name="selection_specialist_pioneer_convert">Convert to Bearer</string>
 </resources>

@@ -18,57 +18,49 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import jsettlers.common.images.ImageLink;
 import jsettlers.common.movable.EMovableType;
-import jsettlers.common.movable.ESoldierLevel;
-import jsettlers.common.movable.ESoldierType;
+import jsettlers.graphics.action.ConvertAction;
 import jsettlers.graphics.androidui.R;
+import jsettlers.graphics.androidui.utils.OriginalImageProvider;
 
 /**
- * The menu that gets displayed when a soldier is selected.
+ * A menu to display while we are in a partition and there is nothing (or only bearers) selected.
+ *
  * @author Michael Zangl
  */
-public class SoldierSelectionMenu extends SelectionMenu {
-
+public class InPartitionSelectionMenu extends SelectionMenu {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.selection_soldier, container, false);
+		return inflater.inflate(R.layout.selection_in_partition, container, false);
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		loadButton(view, R.id.selection_soldier_swordsmen, R.id.selection_soldier_swordsmen_button, ESoldierType.SWORDSMAN, IMAGE_SWORDSMAN);
-		loadButton(view, R.id.selection_soldier_bowmen, R.id.selection_soldier_bowmen_button, ESoldierType.BOWMAN, IMAGE_BOWMAN);
-		loadButton(view, R.id.selection_soldier_pikemen, R.id.selection_soldier_pikemen_button, ESoldierType.PIKEMAN, IMAGE_PIKEMAN);
-		loadButton(view, R.id.selection_soldier_priest, R.id.selection_soldier_priest_button, selection.getMovableCount(EMovableType.BEARER) + "", IMAGE_PRIEST);
-
-		loadMoveButton(view, R.id.selection_soldier_move);
-		loadDoWorkButton(view, R.id.selection_soldier_attack);
+		loadButton(view, R.id.selection_none_geologist_one, R.id.selection_none_geologist_five, R.id.selection_none_geologist_count,
+				R.id.selection_none_geologist_icon, EMovableType.GEOLOGIST, IMAGE_GEOLOGIST);
+		loadButton(view, R.id.selection_none_thief_one, R.id.selection_none_thief_five, R.id.selection_none_thief_count,
+				R.id.selection_none_thief_icon, EMovableType.THIEF, IMAGE_THIEF);
+		loadButton(view, R.id.selection_none_pioneer_one, R.id.selection_none_pioneer_five, R.id.selection_none_pioneer_count,
+				R.id.selection_none_pioneer_icon, EMovableType.PIONEER, IMAGE_PIONEER);
 	}
 
-	private void loadButton(View view, int textId, int buttonId, ESoldierType type, ImageLink image) {
-		int[] count = new int[ESoldierLevel.values().length];
-		for (EMovableType m : type.getAllOfType()) {
-			count[m.getLevel().ordinal()] += selection.getMovableCount(m);
-		}
+	private void loadButton(View view, int oneId, int fiveId, int countId, int iconId, final EMovableType type, ImageLink image) {
+		Button one = (Button) view.findViewById(oneId);
+		Button five = (Button) view.findViewById(fiveId);
+		TextView count = (TextView) view.findViewById(countId);
+		ImageView icon = (ImageView) view.findViewById(iconId);
+		count.setText(""); // TODO: Count in whole game?
+		OriginalImageProvider.get(image).setAsButtonHigh(icon);
 
-		int max = count.length - 1;
-		while (max > 0 && count[max] == 0) {
-			// Skip high level zeros.
-			max--;
-		}
-		StringBuilder string = new StringBuilder();
-		for (int i = 0; i <= max; i++) {
-			if (i != 0) {
-				string.append(" ");
-			}
-			string.append(count[i]);
-		}
-
-		loadButton(view, textId, buttonId, string.toString(), image);
+		one.setOnClickListener(generateActionListener(new ConvertAction(type, (short) 1), false));
+		five.setOnClickListener(generateActionListener(new ConvertAction(type, (short) 5), false));
 	}
 }

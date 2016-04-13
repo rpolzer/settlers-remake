@@ -15,22 +15,17 @@
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/selection_soldier_swordsmen_button"
+                android:id="@+id/selection_specialist_pioneer_button"
                 android:layout_weight="1"/>
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/selection_soldier_bowmen_button"
+                android:id="@+id/selection_specialist_geologist_button"
                 android:layout_weight="1"/>
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/selection_soldier_pikemen_button"
-                android:layout_weight="1"/>
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/selection_soldier_priest_button"
+                android:id="@+id/selection_specialist_thief_button"
                 android:layout_weight="1"/>
         </TableRow>
         <TableRow
@@ -42,28 +37,21 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="0"
-                android:id="@+id/selection_soldier_swordsmen"
+                android:id="@+id/selection_specialist_pioneer"
                 android:layout_weight="1"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="0"
-                android:id="@+id/selection_soldier_bowmen"
+                android:id="@+id/selection_specialist_geologist"
                 android:layout_weight="1"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="0"
-                android:id="@+id/selection_soldier_pikemen"
-                android:layout_weight="1"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="0"
-                android:id="@+id/selection_soldier_priest"
+                android:id="@+id/selection_specialist_thief"
                 android:layout_weight="1"/>
         </TableRow>
     </TableLayout>
@@ -83,19 +71,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/selection_movable_move"
-            android:id="@+id/selection_soldier_move"/>
-
+            android:id="@+id/selection_specialist_move"/>
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
         </FrameLayout>
-
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/selection_soldier_attack"
-            android:id="@+id/selection_soldier_attack"/>
+            android:text="@string/selection_specialist_pioneer_convert"
+            android:id="@+id/selection_specialist_pioneer_convert"/>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+        </FrameLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/selection_specialist_work"
+            android:id="@+id/selection_specialist_work"/>
 
     </LinearLayout>
 

@@ -1,5 +1,9 @@
 package jsettlers.graphics.androidui.hud;
 
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
+
 import jsettlers.common.buildings.IBuilding;
 import jsettlers.common.map.partition.IPartitionData;
 import jsettlers.common.position.ShortPoint2D;
@@ -8,12 +12,10 @@ import jsettlers.graphics.androidui.MapViewChangeObserveable.IMapSelectionListen
 import jsettlers.graphics.androidui.R;
 import jsettlers.graphics.androidui.menu.AndroidMenuPutable;
 import jsettlers.graphics.androidui.menu.selection.BuildingMenu;
+import jsettlers.graphics.androidui.menu.selection.InPartitionSelectionMenu;
 import jsettlers.graphics.androidui.menu.selection.SelectionMenu;
 import jsettlers.graphics.androidui.menu.selection.SoldierSelectionMenu;
-
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import jsettlers.graphics.androidui.menu.selection.SpecialistSelectionMenu;
 
 /**
  * Updates the given button depending on the current selection.
@@ -69,6 +71,13 @@ public class ButtonForSelectionManager implements IMapSelectionListener, OnClick
 			case SOLDIERS:
 				menu = new SoldierSelectionMenu();
 				break;
+			case SPECIALISTS:
+				menu = new SpecialistSelectionMenu();
+				break;
+			case PEOPLE:
+			default:
+				// TODO: Only if in a partition...
+				menu = new InPartitionSelectionMenu();
 			}
 
 			if (menu != null) {

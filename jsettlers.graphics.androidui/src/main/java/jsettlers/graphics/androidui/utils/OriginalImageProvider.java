@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.widget.ImageView;
+
 import jsettlers.common.Color;
 import jsettlers.common.buildings.EBuildingType;
 import jsettlers.common.images.ImageLink;
@@ -12,10 +16,6 @@ import jsettlers.common.material.EMaterialType;
 import jsettlers.graphics.image.Image;
 import jsettlers.graphics.image.SingleImage;
 import jsettlers.graphics.map.draw.ImageProvider;
-import android.graphics.Bitmap;
-import android.os.Handler;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 
 public class OriginalImageProvider {
 	private static final OriginalImageProvider INSTANCE = new OriginalImageProvider();
@@ -114,18 +114,26 @@ public class OriginalImageProvider {
 			}
 		}
 
-		public void setAsButton(ImageView button) {
-			float density = button.getContext().getResources().getDisplayMetrics().density;
-			int w = (int) (180 / density);
-			button.getLayoutParams().width = w;
-			button.getLayoutParams().height = w * 3 / 4;
-			button.setScaleType(ImageView.ScaleType.FIT_CENTER);
-			setAsImage(button);
+		public void setAsButton(ImageView view) {
+			setAsButton(view, 180, 120);
+		}
+
+		public void setAsButtonHigh(ImageView view) {
+			setAsButton(view, 180, 240);
+		}
+
+		private void setAsButton(ImageView view, int width, int height) {
+			view.setScaleType(ImageView.ScaleType.FIT_CENTER);
+			float density = view.getContext().getResources().getDisplayMetrics().density;
+			view.getLayoutParams().width = (int) (width / density);
+			view.getLayoutParams().height = (int) (height / density);
+			setAsImage(view);
 		}
 
 		private void realSetAsImage(ImageView view) {
 			view.setImageBitmap(bm);
 		}
+
 	}
 
 	private class ImageLoaderThread extends Thread {
