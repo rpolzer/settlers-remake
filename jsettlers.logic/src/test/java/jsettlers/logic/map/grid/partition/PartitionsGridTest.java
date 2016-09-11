@@ -19,6 +19,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import jsettlers.logic.map.grid.partition.manager.materials.offers.EOfferPriority;
 import jsettlers.testutils.TestUtils;
 import jsettlers.common.buildings.EBuildingType;
 import jsettlers.common.map.shapes.FreeMapArea;
@@ -85,8 +87,8 @@ public class PartitionsGridTest {
 		assertEquals(WIDTH * HEIGHT, noPlayerPartition.getNumberOfElements()); // test if no player partition has all positions
 
 		// put material at the test position
-		noPlayerPartition.addOffer(materialTestPos, EMaterialType.STONE);
-		noPlayerPartition.addOffer(materialTestPos, EMaterialType.STONE);
+		noPlayerPartition.addOffer(materialTestPos, EMaterialType.STONE, EOfferPriority.NORMAL);
+		noPlayerPartition.addOffer(materialTestPos, EMaterialType.STONE, EOfferPriority.NORMAL);
 		// assert the material is at the test position
 		assertOfferAt(materialTestPos, EMaterialType.STONE, 2);
 
@@ -96,7 +98,7 @@ public class PartitionsGridTest {
 
 		assertEquals(1, grid.getPartitionAt(materialTestPos.x, materialTestPos.y).getPlayerId());
 		assertOfferAt(materialTestPos, EMaterialType.STONE, 2); // assert the offer switch to partition1
-		assertNull(noPlayerPartition.getMaterialOfferAt(materialTestPos, EMaterialType.STONE)); // assert the no player partition removed the offer
+		assertNull(noPlayerPartition.getMaterialOfferAt(materialTestPos, EMaterialType.STONE, EOfferPriority.NORMAL)); // assert the no player partition removed the offer
 
 		int positionsPartition2 = setPartitionInCircle(partition2, 125, 125, 30);
 		assertEquals(positionsPartition2, grid.getPartitionAt((short) 125, (short) 125).getNumberOfElements());
@@ -172,8 +174,8 @@ public class PartitionsGridTest {
 		// add two stones
 		PartitionManager partition = grid.getPartitionAt(50, 100);
 		ShortPoint2D materialPos = new ShortPoint2D(75, 100);
-		partition.addOffer(materialPos, EMaterialType.STONE);
-		partition.addOffer(materialPos, EMaterialType.STONE);
+		partition.addOffer(materialPos, EMaterialType.STONE, EOfferPriority.NORMAL);
+		partition.addOffer(materialPos, EMaterialType.STONE, EOfferPriority.NORMAL);
 
 		addTower(0, 150, 100, 40);
 		// check if the partitions are not connected
@@ -270,7 +272,7 @@ public class PartitionsGridTest {
 	}
 
 	private void assertOfferAt(ShortPoint2D materialTestPos, EMaterialType material, int amount) {
-		MaterialOffer offer = grid.getPartitionAt(materialTestPos.x, materialTestPos.y).getMaterialOfferAt(materialTestPos, material);
+		MaterialOffer offer = grid.getPartitionAt(materialTestPos.x, materialTestPos.y).getMaterialOfferAt(materialTestPos, material, EOfferPriority.NORMAL);
 		assertNotNull(offer);
 		assertEquals(amount, offer.getAmount());
 	}

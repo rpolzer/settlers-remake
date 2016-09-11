@@ -325,9 +325,9 @@ public final class PartitionsGrid implements Serializable, IBlockingChangedListe
 	/**
 	 * Recalculates the tower counter for the given area. <br>
 	 * NOTE: The given area must completely belong to the given player!
-	 * 
+	 *
+	 * @param tower
 	 * @param area
-	 * @param playerId
 	 */
 	private void recalculateTowerCounter(PartitionOccupyingTower tower, IMapArea area) {
 		List<Tuple<Integer, PartitionOccupyingTower>> towersInRange = occupyingTowers.getTowersInRange(tower.position, tower.radius);
@@ -416,7 +416,7 @@ public final class PartitionsGrid implements Serializable, IBlockingChangedListe
 	 * Occupies the given area for the given playerId.
 	 * 
 	 * @param playerId
-	 * @param filteredInfluencingArea
+	 * @param influencingArea
 	 * @param borders
 	 */
 	private void occupyAreaByTower(final byte playerId, Iterable<ShortPoint2D> influencingArea, SRectangle borders) {
