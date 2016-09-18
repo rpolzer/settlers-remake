@@ -50,7 +50,7 @@ import jsettlers.graphics.action.SetBuildingPriorityAction;
 import jsettlers.graphics.action.SetMaterialDistributionSettingsAction;
 import jsettlers.graphics.action.SetMaterialPrioritiesAction;
 import jsettlers.graphics.action.SetMaterialProductionAction;
-import jsettlers.graphics.action.SetMaterialStockAcceptedAction;
+import jsettlers.graphics.action.SetAcceptedStockMaterialAction;
 import jsettlers.graphics.action.SetTradingWaypointAction;
 import jsettlers.graphics.action.ShowConstructionMarksAction;
 import jsettlers.graphics.action.SoldierAction;
@@ -63,6 +63,7 @@ import jsettlers.input.tasks.DestroyBuildingGuiTask;
 import jsettlers.input.tasks.EGuiAction;
 import jsettlers.input.tasks.MovableGuiTask;
 import jsettlers.input.tasks.MoveToGuiTask;
+import jsettlers.input.tasks.SetAcceptedStockMaterialGuiTask;
 import jsettlers.input.tasks.SetBuildingPriorityGuiTask;
 import jsettlers.input.tasks.SetMaterialDistributionSettingsGuiTask;
 import jsettlers.input.tasks.SetMaterialPrioritiesGuiTask;
@@ -124,7 +125,7 @@ public class GuiInterface implements IMapInterfaceListener, ITaskExecutorGuiInte
 		}, 1000, 1000);
 
 		Player player = grid.getPlayer(playerId);
-		if(player != null ){
+		if (player != null) {
 			player.setMessenger(connector);
 		}
 		clock.setTaskExecutor(new GuiTaskExecutor(grid, this, this.playerId));
@@ -301,9 +302,9 @@ public class GuiInterface implements IMapInterfaceListener, ITaskExecutorGuiInte
 		}
 
 		case SET_MATERIAL_STOCK_ACCEPTED: {
-			final SetMaterialStockAcceptedAction a = (SetMaterialStockAcceptedAction) action;
-			// TODO @Andreas: implement this.
-			System.err.println("Not implemented: " + a);
+			final SetAcceptedStockMaterialAction a = (SetAcceptedStockMaterialAction) action;
+			taskScheduler.scheduleTask(new SetAcceptedStockMaterialGuiTask(playerId, a.getPosition(), a.getMaterial(), a.shouldAccept(), a
+					.isLocalSetting()));
 			break;
 		}
 
@@ -350,10 +351,10 @@ public class GuiInterface implements IMapInterfaceListener, ITaskExecutorGuiInte
 			requestSoldiers(EChangeTowerSoldierTaskType.ONE, null);
 			break;
 		case SOLDIERS_LESS:
-			requestSoldiers(EChangeTowerSoldierTaskType.LESS, ((SoldierAction)action).getSoldierType());
+			requestSoldiers(EChangeTowerSoldierTaskType.LESS, ((SoldierAction) action).getSoldierType());
 			break;
 		case SOLDIERS_MORE:
-			requestSoldiers(EChangeTowerSoldierTaskType.MORE, ((SoldierAction)action).getSoldierType());
+			requestSoldiers(EChangeTowerSoldierTaskType.MORE, ((SoldierAction) action).getSoldierType());
 			break;
 
 		case ABORT:
@@ -368,11 +369,9 @@ public class GuiInterface implements IMapInterfaceListener, ITaskExecutorGuiInte
 		}
 	}
 
-
-
 	private void requestSoldiers(EChangeTowerSoldierTaskType taskType, ESoldierType soldierType) {
 		ISelectable selectable = currentSelection.getSingle();
-		if(selectable instanceof OccupyingBuilding) {
+		if (selectable instanceof OccupyingBuilding) {
 			OccupyingBuilding building = ((OccupyingBuilding) selectable);
 			scheduleTask(new ChangeTowerSoldiersGuiTask(playerId, building.getPos(), taskType, soldierType));
 		}
