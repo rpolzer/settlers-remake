@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
+import jsettlers.common.buildings.EBuildingType;
 import jsettlers.common.buildings.IBuilding;
 import jsettlers.common.buildings.IBuildingMaterial;
 import jsettlers.common.buildings.IBuildingOccupier;
@@ -49,6 +50,7 @@ public class BuildingState {
 	private final BitSet stockStates;
 	private final int[] tradingCounts;
 	private final boolean isSeaTrading;
+	private final boolean isDockyard;
 
 	/**
 	 * This is the state for a building stack.
@@ -170,6 +172,7 @@ public class BuildingState {
 			stackStates.add(new StackState(mat));
 		}
 		isSeaTrading = building instanceof IBuilding.ITrading && ((IBuilding.ITrading) building).isSeaTrading();
+		isDockyard = building.getBuildingType() == EBuildingType.DOCKYARD;
 	}
 
 	private int[] computeTradingCounts(IBuilding building) {
@@ -335,5 +338,19 @@ public class BuildingState {
 	 */
 	public boolean isSeaTrading() {
 		return isSeaTrading;
+	}
+
+	/**
+	 * @return <code>true</code> if this is a dockyard building
+	 */
+	public boolean isDockyard() {
+		return isDockyard;
+	}
+
+	/**
+	 * @return <code>true</code> if this dockyard is currently building a ship.
+	 */
+	public boolean isWorkingDockyard() {
+		return isDockyard;
 	}
 }
