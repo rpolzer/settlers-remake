@@ -210,7 +210,7 @@ public class FilesystemTreeNode implements TreeNode {
 			settlersFolder = false;
 		}
 
-		Collections.sort(list, Comparators.comparing(node -> node.getFile().getName()));
+		Collections.sort(list, Comparators.<FilesystemTreeNode, String>comparing(node -> node.getFile().getName()));
 
 		return list;
 	}

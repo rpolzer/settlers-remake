@@ -26,9 +26,9 @@ task releaseJar(type: Jar) {
 dependencies {
     compile project(':go.graphics')
     compile project(':go.graphics.jogl')
+    compile project(':go.graphics.lwjgl')
     compile project(':jsettlers.common')
     compile project(':jsettlers.graphics')
-    compile project(':jsettlers.graphics.jogl')
     compile project(':jsettlers.logic')
     compile project(':jsettlers.network')
 }

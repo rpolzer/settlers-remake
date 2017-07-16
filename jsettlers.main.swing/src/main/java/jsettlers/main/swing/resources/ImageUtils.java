@@ -1,4 +1,4 @@
-package jsettlers.graphics.jogl.utils;
+package jsettlers.main.swing.resources;
 
 import java.awt.image.BufferedImage;
 import java.nio.ShortBuffer;

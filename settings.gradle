@@ -4,11 +4,13 @@ gradle.ext.projectsWithExtraTest = []
 
 include ':go.graphics'
 include ':go.graphics.jogl'
+include ':go.graphics.lwjgl'
 include ':jsettlers.buildingcreator'
 include ':jsettlers.common'
 include ':jsettlers.graphics'
 include ':jsettlers.graphics:layoutbuilder'
 include ':jsettlers.graphics.jogl'
+include ':jsettlers.graphics.lwjgl'
 include ':jsettlers.logic'
 include ':jsettlers.main.swing'
 include ':jsettlers.mapcreator'

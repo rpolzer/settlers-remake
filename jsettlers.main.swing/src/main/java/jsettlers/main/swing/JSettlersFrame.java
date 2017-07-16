@@ -21,8 +21,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -31,7 +29,6 @@ import javax.swing.WindowConstants;
 import go.graphics.area.Area;
 import go.graphics.region.Region;
 import go.graphics.sound.SoundPlayer;
-import go.graphics.jogl.AreaContainer;
 import go.graphics.jogl.sound.SwingSoundPlayer;
 
 import jsettlers.common.CommitInfo;
@@ -49,11 +46,16 @@ import jsettlers.main.swing.menu.mainmenu.MainMenuPanel;
 import jsettlers.main.swing.menu.startinggamemenu.StartingGamePanel;
 import jsettlers.main.swing.settings.SettingsManager;
 import jsettlers.main.swing.settings.UiPlayer;
+import jsettlers.main.swing.start.IGameStarter;
+import jsettlers.main.swing.start.JoglGameStarter;
+import jsettlers.main.swing.start.LwjglGameStarter;
 
 /**
  * @author codingberlin
  */
 public class JSettlersFrame extends JFrame {
+	private static final boolean USE_LWJGL = true;
+
 	private static final long serialVersionUID = 2607082717493797224L;
 
 	private final IMultiplayerConnector multiPlayerConnector;
@@ -62,13 +64,20 @@ public class JSettlersFrame extends JFrame {
 	private final JoinGamePanel joinGamePanel = new JoinGamePanel(this);
 	private final SoundPlayer soundPlayer = new SwingSoundPlayer(SettingsManager.getInstance());
 
-	private Timer redrawTimer;
 	private boolean fullScreen = false;
+	
+	private final IGameStarter gameStarter;
 
 	JSettlersFrame() throws HeadlessException {
 		setTitle("JSettlers - Version: " + CommitInfo.COMMIT_HASH_SHORT);
 
 		SettingsManager settingsManager = SettingsManager.getInstance();
+		
+		if (USE_LWJGL) {
+			gameStarter = new LwjglGameStarter();
+		} else {
+			gameStarter = new JoglGameStarter();
+		}
 
 		UiPlayer uiPlayer = settingsManager.getPlayer();
 		multiPlayerConnector = new MultiplayerConnector(settingsManager.get(SettingsManager.SETTING_SERVER), uiPlayer.getId(), uiPlayer.getName());
@@ -99,6 +108,7 @@ public class JSettlersFrame extends JFrame {
 		fullScreen = !fullScreen;
 		SettingsManager.getInstance().setFullScreenMode(fullScreen);
 		updateFullScreenMode();
+		gameStarter.setFullScreenMode(fullScreen);
 	}
 
 	private void updateFullScreenMode() {
@@ -115,15 +125,8 @@ public class JSettlersFrame extends JFrame {
 		graphicsDevice.setFullScreenWindow(fullScreen ? this : null);
 	}
 
-	private void abortRedrawTimerIfPresent() {
-		if (redrawTimer != null) {
-			redrawTimer.cancel();
-			redrawTimer = null;
-		}
-	}
-
 	public void showMainMenu() {
-		abortRedrawTimerIfPresent();
+		gameStarter.abortGame();
 		setNewContentPane(mainPanel);
 	}
 
@@ -133,14 +136,14 @@ public class JSettlersFrame extends JFrame {
 	}
 
 	private void setNewContentPane(Container newContent) {
-		abortRedrawTimerIfPresent();
+		gameStarter.abortGame();
 		setContentPane(newContent);
 		revalidate();
 		repaint();
 	}
 
 	public void exit() {
-		abortRedrawTimerIfPresent();
+		gameStarter.abortGame();
 		System.exit(0);
 	}
 
@@ -154,19 +157,7 @@ public class JSettlersFrame extends JFrame {
 		Area area = new Area();
 		area.add(region);
 
-		redrawTimer = new Timer("opengl-redraw");
-		redrawTimer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				region.requestRedraw();
-			}
-		}, 100, 25);
-
-		SwingUtilities.invokeLater(() -> {
-			setContentPane(new AreaContainer(area));
-			revalidate();
-			repaint();
-		});
+		gameStarter.startGame(area, this, fullScreen);
 	}
 
 	public void showNewSinglePlayerGameMenu(MapLoader mapLoader) {

@@ -19,6 +19,8 @@ import go.graphics.GeometryHandle;
 import go.graphics.IllegalBufferException;
 import go.graphics.TextureHandle;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 
 import jsettlers.common.Color;
@@ -77,7 +79,8 @@ public class SingleImage extends Image implements ImageDataPrivider {
 	 *            The data to use.
 	 */
 	protected SingleImage(ImageMetadata metadata, short[] data) {
-		this.data = ShortBuffer.wrap(data);
+		this.data = ByteBuffer.allocateDirect(data.length * 2).order(ByteOrder.nativeOrder()).asShortBuffer();
+		this.data.put(data);
 		this.width = metadata.width;
 		this.height = metadata.height;
 		this.offsetX = metadata.offsetX;

@@ -32,9 +32,9 @@ import jsettlers.common.player.ECivilisation;
 import jsettlers.graphics.image.SingleImage;
 import jsettlers.graphics.localization.Labels;
 import jsettlers.graphics.map.draw.ImageProvider;
-import jsettlers.graphics.jogl.utils.ImageUtils;
 import jsettlers.main.swing.JSettlersSwingUtil;
 import jsettlers.main.swing.lookandfeel.ELFStyle;
+import jsettlers.main.swing.resources.ImageUtils;
 
 /**
  * @author codingberlin

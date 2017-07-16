@@ -25,7 +25,7 @@ import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicLabelUI;
 
 import jsettlers.graphics.map.draw.ImageProvider;
-import jsettlers.graphics.jogl.utils.ImageUtils;
+import jsettlers.main.swing.resources.ImageUtils;
 
 /**
  * Label UI, with different stylings

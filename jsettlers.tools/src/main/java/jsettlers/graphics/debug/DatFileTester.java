@@ -49,8 +49,8 @@ import jsettlers.graphics.reader.AdvancedDatFileReader;
 import jsettlers.graphics.reader.DatFileType;
 import jsettlers.graphics.reader.SequenceList;
 import jsettlers.graphics.sequence.Sequence;
-import jsettlers.graphics.jogl.utils.ImageUtils;
 import jsettlers.main.swing.resources.ConfigurationPropertiesFile;
+import jsettlers.main.swing.resources.ImageUtils;
 
 public class DatFileTester {
 	private static final int DAT_FILE_INDEX = 14;
