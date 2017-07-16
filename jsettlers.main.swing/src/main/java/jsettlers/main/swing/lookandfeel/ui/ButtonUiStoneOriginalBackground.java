@@ -26,7 +26,7 @@ import javax.swing.JToggleButton;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 import jsettlers.graphics.map.draw.ImageProvider;
-import jsettlers.graphics.swing.utils.ImageUtils;
+import jsettlers.graphics.jogl.utils.ImageUtils;
 import jsettlers.main.swing.lookandfeel.DrawHelper;
 
 /**

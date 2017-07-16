@@ -31,7 +31,7 @@ import go.graphics.event.GOEvent;
 import go.graphics.event.GOKeyEvent;
 import go.graphics.region.Region;
 import go.graphics.region.RegionContent;
-import go.graphics.swing.AreaContainer;
+import go.graphics.jogl.AreaContainer;
 import go.graphics.text.EFontSize;
 import go.graphics.text.TextDrawer;
 
@@ -49,7 +49,7 @@ import jsettlers.graphics.reader.AdvancedDatFileReader;
 import jsettlers.graphics.reader.DatFileType;
 import jsettlers.graphics.reader.SequenceList;
 import jsettlers.graphics.sequence.Sequence;
-import jsettlers.graphics.swing.utils.ImageUtils;
+import jsettlers.graphics.jogl.utils.ImageUtils;
 import jsettlers.main.swing.resources.ConfigurationPropertiesFile;
 
 public class DatFileTester {

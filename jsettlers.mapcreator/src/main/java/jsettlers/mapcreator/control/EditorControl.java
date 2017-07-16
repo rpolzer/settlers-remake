@@ -41,8 +41,8 @@ import javax.swing.SwingUtilities;
 
 import go.graphics.area.Area;
 import go.graphics.region.Region;
-import go.graphics.swing.AreaContainer;
-import go.graphics.swing.sound.SwingSoundPlayer;
+import go.graphics.jogl.AreaContainer;
+import go.graphics.jogl.sound.SwingSoundPlayer;
 
 import jsettlers.common.CommonConstants;
 import jsettlers.common.buildings.EBuildingType;

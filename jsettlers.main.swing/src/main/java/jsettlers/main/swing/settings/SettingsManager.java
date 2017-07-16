@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.UUID;
 
-import go.graphics.swing.sound.ISoundSettingsProvider;
+import go.graphics.jogl.sound.ISoundSettingsProvider;
 
 import jsettlers.common.CommonConstants;
 import jsettlers.common.resources.ResourceManager;

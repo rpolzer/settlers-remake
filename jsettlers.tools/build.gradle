@@ -3,10 +3,10 @@ apply plugin: 'java'
 dependencies {
     compile 'junit:junit:4.12'
     compile project(':go.graphics')
-    compile project(':go.graphics.swing')
+    compile project(':go.graphics.jogl')
     compile project(':jsettlers.common')
     compile project(':jsettlers.graphics')
-    compile project(':jsettlers.graphics.swing')
+    compile project(':jsettlers.graphics.jogl')
     compile project(':jsettlers.logic')
     compile project(':jsettlers.main.swing')
     compile project(':jsettlers.network')
