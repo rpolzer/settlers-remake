@@ -27,9 +27,12 @@ public class LwjglGameStarter implements IGameStarter {
 		// TODO: make this nice
 		lwjglWindow = new LwjglWindow(contentArea, mainFrame.getBounds(), mainFrame.getTitle()) {
 			@Override
-			public void close() {
-				super.close();
-				SwingUtilities.invokeLater(() -> ((JSettlersFrame)mainFrame).showMainMenu());
+			protected void onClose() {
+				super.onClose();
+				if (LwjglGameStarter.this.mainFrame != null) {
+					// exit on close.
+					System.exit(0);
+				}
 			}
 		};
 		throw new RuntimeException();

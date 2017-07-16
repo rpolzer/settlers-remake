@@ -19,20 +19,16 @@ import go.graphics.area.Area;
 import go.graphics.lwjgl.event.LwjglEventConverter;
 import go.graphics.lwjgl.opengl.LwjglDrawContext;
 
-import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
@@ -46,13 +42,19 @@ import org.lwjgl.BufferUtils;
  */
 public class LwjglWindow {
 	private final Area area;
-	private final long window;
 	private LwjglEventConverter events;
+	private GLFWKeyCallback keyCallback;
+	private static boolean initialized;
+	private final long window;
 
 	public LwjglWindow(Area area, Rectangle position, String title) {
-		setUpLwjgl();
+		if (!initialized) {
+			setUpLwjgl();
+		}
 		
 		this.area = area;
+		
+		// Only works once for now
 		window = GLFW.glfwCreateWindow(position.width, position.height, title, MemoryUtil.NULL, MemoryUtil.NULL);
 		if (window == MemoryUtil.NULL) {
 			throw new LwjglException("Could not create window");
@@ -62,19 +64,17 @@ public class LwjglWindow {
 		GLFW.glfwSwapInterval(1);
 		
 		events = new LwjglEventConverter(area);
-		GLFW.glfwSetKeyCallback(window, events.getKeyCallback());
+		keyCallback = events.getKeyCallback();
+		GLFW.glfwSetKeyCallback(window, keyCallback);
 
 		GLFW.glfwSetWindowPos(window, position.x, position.y);
-
-		GLFW.glfwMakeContextCurrent(window);
-		GLFW.glfwSwapInterval(1);
 		
 		GLFW.glfwShowWindow(window);
 		
 		new Thread(new LwjglLoop()).start();
 	}
 
-	private void setUpLwjgl() {
+	private static void setUpLwjgl() {
 		GLFWErrorCallback.createPrint(System.err).set();
 		
 		if (!GLFW.glfwInit()) {
@@ -84,10 +84,14 @@ public class LwjglWindow {
 		GLFW.glfwDefaultWindowHints();
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL11.GL_FALSE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GL11.GL_TRUE);
+		initialized = true;
 	}
 
 	public void close() {
 		GLFW.glfwSetWindowShouldClose(window, true);
+	}
+	
+	protected void onClose() {
 	}
 
 	public Area getArea() {
@@ -100,17 +104,15 @@ public class LwjglWindow {
 		}
 		
 		public void run() {
+			LwjglDrawContext context = initialize();
 			try {
-				LwjglDrawContext context = initialize();
-	
 				while (!GLFW.glfwWindowShouldClose(window)) {
 					mainLoop(context);
 				}
-				
-				terminate();
 			} catch (Throwable t) {
 				t.printStackTrace();
-				// TODO: Notify main game that we crashed
+			} finally {
+				terminate(context);
 			}
 		}
 
@@ -128,7 +130,7 @@ public class LwjglWindow {
 				IntBuffer pHeight = stack.mallocInt(1); // int*
 
 				// Get the window size passed to glfwCreateWindow
-				glfwGetWindowSize(window, pWidth, pHeight);
+				GLFW.glfwGetWindowSize(window, pWidth, pHeight);
 
 				area.setWidth(pWidth.get(0));
 				area.setHeight(pHeight.get(0));
@@ -141,22 +143,28 @@ public class LwjglWindow {
 			DoubleBuffer b2 = BufferUtils.createDoubleBuffer(1);
 			GLFW.glfwGetCursorPos(window, b1, b2);
 			events.updateMouse(new UIPoint(b1.get(), area.getHeight() - b2.get()), 
-					glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) != 0, 
-					glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) != 0);
+					GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_1) != 0, 
+					GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_2) != 0);
 
-			glfwSwapBuffers(window);
+			GLFW.glfwSwapBuffers(window);
 
 			// Keys, ...
-			glfwPollEvents();
+			GLFW.glfwPollEvents();
 		}
 
-		private void terminate() {
-			Callbacks.glfwFreeCallbacks(window);
+		private void terminate(LwjglDrawContext context) {
+			context.disposeAll();
+			
+			GLFW.glfwSetKeyCallback(window, null);
+			keyCallback.free();
+
 			GLFW.glfwDestroyWindow(window);
 		
 			// Terminate GLFW and free the error callback
-			GLFW.glfwTerminate();
-			GLFW.glfwSetErrorCallback(null).free();
+			//GLFW.glfwTerminate();
+			//GLFW.glfwSetErrorCallback(null).free();
+			
+			onClose();
 		}
 	}
 }
