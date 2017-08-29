@@ -130,8 +130,7 @@ public final class MapContent implements RegionContent, IMapInterfaceListener, A
 		}
 
 		private void eventDataChanged(float zoomFactor, UIPoint p) {
-			float newZoom = startZoom * zoomFactor;
-			setZoom(newZoom, p);
+			setZoom(zoomFactor, p);
 		}
 	}
 

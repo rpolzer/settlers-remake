@@ -26,16 +26,6 @@ import jsettlers.common.position.FloatRectangle;
  */
 public class ScreenPosition {
 
-	/**
-	 * Minimum zoom allowed
-	 */
-	private static final float MINIMUM_ZOOM = .2f;
-
-	/**
-	 * Maximum zoom allowed
-	 */
-	private static final float MAXIMUM_ZOOM = 3f;
-
 	private static final int TOPBORDER = 100;
 
 	private FloatRectangle screen = new FloatRectangle(0, 0, 1, 1);
@@ -126,11 +116,11 @@ public class ScreenPosition {
 	 * Set the new zoom factor.
 	 * 
 	 * @param newZoom
-	 *            The new zoom factor. It is automatically clamped.
+	 *            The new zoom factor. It must be limited by the caller.
 	 */
 	public void setZoom(float newZoom, UIPoint pointingPosition) {
 		oldZoom = zoom;
-		zoom = clamp(MINIMUM_ZOOM, MAXIMUM_ZOOM, newZoom);
+		zoom = newZoom;
 		pointer = pointingPosition;
 	}
 

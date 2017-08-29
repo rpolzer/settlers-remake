@@ -14,14 +14,12 @@
  *******************************************************************************/
 package go.graphics.lwjgl;
 
-import go.graphics.UIPoint;
-import go.graphics.area.Area;
-import go.graphics.lwjgl.event.LwjglEventConverter;
-import go.graphics.lwjgl.opengl.LwjglDrawContext;
-
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLCapabilities;
@@ -29,10 +27,11 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import java.awt.Rectangle;
-import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
-import org.lwjgl.BufferUtils;
+import go.graphics.area.Area;
+import go.graphics.lwjgl.event.LwjglEventConverter;
+import go.graphics.lwjgl.opengl.LwjglDrawContext;
 
 /**
  * This is a window that consists of exactly one area.
@@ -44,6 +43,9 @@ public class LwjglWindow {
 	private final Area area;
 	private LwjglEventConverter events;
 	private GLFWKeyCallback keyCallback;
+	private GLFWScrollCallback scrollCallback;
+	private GLFWCursorPosCallback mousePositionCallback;
+	private GLFWMouseButtonCallback mouseButtonCallback;
 	private static boolean initialized;
 	private final long window;
 
@@ -66,6 +68,12 @@ public class LwjglWindow {
 		events = new LwjglEventConverter(area);
 		keyCallback = events.getKeyCallback();
 		GLFW.glfwSetKeyCallback(window, keyCallback);
+		scrollCallback = events.getScrollCallback();
+		GLFW.glfwSetScrollCallback(window, scrollCallback);
+		mousePositionCallback = events.getMousePositionCallback();
+		GLFW.glfwSetCursorPosCallback(window, mousePositionCallback);
+		mouseButtonCallback = events.getMouseButtonCallback();
+		GLFW.glfwSetMouseButtonCallback(window, mouseButtonCallback);
 
 		GLFW.glfwSetWindowPos(window, position.x, position.y);
 		
@@ -99,10 +107,11 @@ public class LwjglWindow {
 	}
 	
 	private class LwjglLoop extends Thread {
+
 		public LwjglLoop() {
 			super("lwjgl-loop");
 		}
-		
+
 		public void run() {
 			LwjglDrawContext context = initialize();
 			try {
@@ -128,10 +137,9 @@ public class LwjglWindow {
 			try ( MemoryStack stack = MemoryStack.stackPush() ) {
 				IntBuffer pWidth = stack.mallocInt(1); // int*
 				IntBuffer pHeight = stack.mallocInt(1); // int*
-
 				// Get the window size passed to glfwCreateWindow
 				GLFW.glfwGetWindowSize(window, pWidth, pHeight);
-
+				events.setWindowHeight(pHeight.get(0));
 				area.setWidth(pWidth.get(0));
 				area.setHeight(pHeight.get(0));
 			}
@@ -139,16 +147,7 @@ public class LwjglWindow {
 			context.startFrame();
 			
 			area.drawArea(context);
-			DoubleBuffer b1 = BufferUtils.createDoubleBuffer(1);
-			DoubleBuffer b2 = BufferUtils.createDoubleBuffer(1);
-			GLFW.glfwGetCursorPos(window, b1, b2);
-			events.updateMouse(new UIPoint(b1.get(), area.getHeight() - b2.get()), 
-					GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_1) != 0, 
-					GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_2) != 0);
-
 			GLFW.glfwSwapBuffers(window);
-
-			// Keys, ...
 			GLFW.glfwPollEvents();
 		}
 
@@ -157,7 +156,12 @@ public class LwjglWindow {
 			
 			GLFW.glfwSetKeyCallback(window, null);
 			keyCallback.free();
-
+			GLFW.glfwSetScrollCallback(window, null);
+			scrollCallback.free();
+			GLFW.glfwSetCursorPosCallback(window, null);
+			mousePositionCallback.free();
+			GLFW.glfwSetMouseButtonCallback(window, null);
+			mouseButtonCallback.free();
 			GLFW.glfwDestroyWindow(window);
 		
 			// Terminate GLFW and free the error callback

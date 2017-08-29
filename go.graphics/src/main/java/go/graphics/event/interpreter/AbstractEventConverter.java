@@ -133,9 +133,9 @@ public class AbstractEventConverter {
 		}
 	}
 
-	protected void updateZoomFactor(float factor) {
+	protected void updateZoomFactor(float factor, UIPoint pointingPosition) {
 		if (ongoingZoomEvent != null) {
-			ongoingZoomEvent.setZoomFactor(factor, null);
+			ongoingZoomEvent.setZoomFactor(factor, pointingPosition);
 		}
 	}
 
