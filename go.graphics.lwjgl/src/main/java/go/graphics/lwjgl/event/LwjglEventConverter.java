@@ -15,21 +15,15 @@
 package go.graphics.lwjgl.event;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCharCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-
 import go.graphics.UIPoint;
 import go.graphics.event.GOEventHandlerProvider;
 import go.graphics.event.interpreter.AbstractEventConverter;
-
-import static java.awt.SystemColor.window;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 
 /**
  * This class listens to lwjgl events and sends them to handlers.
@@ -76,11 +70,25 @@ public class LwjglEventConverter extends AbstractEventConverter {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
 				String text = textForAction(key);
-				if (action == GLFW.GLFW_RELEASE) {
-					endKeyEvent(text);
-				} else if (action == GLFW.GLFW_PRESS) {
-					startKeyEvent(text);
+				if (text.length() != 0) {
+					if (action == GLFW.GLFW_RELEASE) {
+						endKeyEvent(text);
+					} else if (action == GLFW.GLFW_PRESS) {
+						startKeyEvent(text);
+					}
 				}
+			}
+		};
+	}
+
+	public GLFWCharCallback getCharCallback() {
+		return new GLFWCharCallback() {
+			@Override
+			public void invoke(long window, int codepoint) {
+				int[] code = new int[]{codepoint};
+				String text = new String(code, 0, 1);
+				startKeyEvent(text);
+				endKeyEvent(text);
 			}
 		};
 	}
@@ -214,31 +222,14 @@ public class LwjglEventConverter extends AbstractEventConverter {
 			case GLFW.GLFW_KEY_F12:
 				text = "F12";
 				break;
-			case GLFW.GLFW_KEY_KP_ADD:
-				//TODO: Normal add missing?
-				text = "+";
-				break;
-			case GLFW.GLFW_KEY_KP_SUBTRACT:
-			case GLFW.GLFW_KEY_MINUS:
-				text = "-";
-				break;
 			case GLFW.GLFW_KEY_DELETE:
 				text = "DELETE";
-				break;
-			case GLFW.GLFW_KEY_SPACE:
-				text = " ";
 				break;
 			case GLFW.GLFW_KEY_ESCAPE:
 				text = "ESCAPE";
 				break;
 			case GLFW.GLFW_KEY_BACKSPACE:
 				text = "BACK_SPACE";
-				break;
-			case GLFW.GLFW_KEY_P:
-				text = "P";
-				break;
-			case GLFW.GLFW_KEY_Q:
-				text = "Q";
 				break;
 			default:
 				text = "";

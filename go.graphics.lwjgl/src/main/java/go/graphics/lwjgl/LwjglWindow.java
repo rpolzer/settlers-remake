@@ -15,6 +15,7 @@
 package go.graphics.lwjgl;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCharCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -23,6 +24,7 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -43,6 +45,7 @@ public class LwjglWindow {
 	private final Area area;
 	private LwjglEventConverter events;
 	private GLFWKeyCallback keyCallback;
+	private GLFWCharCallback charCallback;
 	private GLFWScrollCallback scrollCallback;
 	private GLFWCursorPosCallback mousePositionCallback;
 	private GLFWMouseButtonCallback mouseButtonCallback;
@@ -68,6 +71,8 @@ public class LwjglWindow {
 		events = new LwjglEventConverter(area);
 		keyCallback = events.getKeyCallback();
 		GLFW.glfwSetKeyCallback(window, keyCallback);
+		charCallback = events.getCharCallback();
+		GLFW.glfwSetCharCallback(window, charCallback);
 		scrollCallback = events.getScrollCallback();
 		GLFW.glfwSetScrollCallback(window, scrollCallback);
 		mousePositionCallback = events.getMousePositionCallback();
@@ -153,9 +158,11 @@ public class LwjglWindow {
 
 		private void terminate(LwjglDrawContext context) {
 			context.disposeAll();
-			
+
 			GLFW.glfwSetKeyCallback(window, null);
 			keyCallback.free();
+			GLFW.glfwSetCharCallback(window, null);
+			charCallback.free();
 			GLFW.glfwSetScrollCallback(window, null);
 			scrollCallback.free();
 			GLFW.glfwSetCursorPosCallback(window, null);
